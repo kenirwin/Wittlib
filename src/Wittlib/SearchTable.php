@@ -25,7 +25,7 @@ class SearchTable {
     $return = $this->q->getOne();
     return $return;
   }
-    public function booleanAnd(string $table, string $terms, array $fields, array $conf) {
+    public function booleanAnd(string $table, string $terms, array $fields, array $conf = []) {
     $this->q->table($table);
     $terms = preg_split('/\s+/',$terms);
 
@@ -37,6 +37,9 @@ class SearchTable {
       }
       $or_str = [$or_arr];
       $this->q->where($or_arr);
+    }
+    if (array_key_exists('orderby', $conf)) {
+        $this->q->order($conf['orderby']);
     }
     return $this->q->get();
     }
