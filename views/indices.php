@@ -75,13 +75,36 @@ elseif (isset($_REQUEST['search']) || isset($genre)) {
 
     if ($count > 0) {
         print "<h3>$count Results</h3>\n";
-
+        if (INDEX == 'writing') {
+            $insert_header = '<th>Publication</th>';
+        }
+        else { $insert_header = ''; }
         echo "<table border=0 cellspacing=10>\n";
-        echo "<tr><th align=left>Author</th><th align=left>Title</th><th align=left>Genre</th><th align=left>Volume (Year)</th> <th>Pages</th>\n";
+        echo "<tr><th align=left>Author</th><th align=left>Title</th><th align=left>Genre</th>". $insert_header ."<th align=left>Volume (Year)</th> <th>Pages</th>\n";
         foreach ($results as $myrow) {
             extract($myrow);
             if (array_key_exists('pages',$myrow)) { $page = $pages; }
-            echo "<tr><td>$author</td> <td>$title</td> <td>$genre</td> <td>$volume ($year)</td> <td>$page</td></tr>\n";
+            if (isset($source) && (INDEX == 'writing')) {
+                switch ($source) {
+                case 'WittReviewLitArt': 
+                    $pub = '<td><i>Wittenberg Review of Literature and Art</i></td>';
+                    break;
+                case 'Spectrum':
+                    $pub = '<td><i>Spectrum</i></td>';
+                    break;
+                case 'Sounds':
+                    $pub = '<td><i>Sounds</i></td>';
+                    break;
+                case 'WittReview':
+                    $pub = '<td><i>Wittenberg Review</i></td>';
+                    break;
+                case 'HistJourn':
+                    $pub = '<td><i>Wittenberg History Journal</i></td>';
+                    break;
+                }
+            }
+            else { $pub = ''; }
+            echo "<tr><td>$author</td> <td>$title</td> <td>$genre</td> $pub <td>$volume ($year)</td> <td>$page</td></tr>\n";
         }
         echo "</table>\n";
     } // end if countable results
