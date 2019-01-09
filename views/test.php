@@ -11,9 +11,11 @@ use Wittlib\SearchTable;
 header('Content-type: text/plain');
 $db = new SearchTable();
 //print ($db->getLast('pholeos','year'));
-$db->booleanAnd('pholeos','photo',['genre','title']);
-var_dump($db->q->render());
-var_dump($db->q->get());
+$r = $db->booleanAnd('pholeos','photo',['genre','title']);
+var_dump($r);
+//var_dump($db->getDistinct('eas_index','genre'));
+//var_dump($db->q->render());
+
 try {
 
 } catch (Exception $e) { 
