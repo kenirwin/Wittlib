@@ -8,7 +8,7 @@
          <table border=0>
 <tr><td>
 <form method=get>
-
+<input type="hidden" name="index" value="eas" />
        <!-- strong>This is an index only. For access to the journal itself, please see a librarian.</strong><P --> 
        Search for: <input type=text name=search value="" size=30> in
 <select name=fields>
@@ -26,7 +26,7 @@ Artwork <input type=checkbox name=genre[] value=artwork CHECKED> |
 Fiction <input type=checkbox name=genre[] value=fiction CHECKED> | 
 Review <input type=checkbox name=genre[] value=review CHECKED>
 
-<BR><strong> or Browse by: </strong> <a href="?browse=author#results">Author</a> | <a href="?browse=title#results">Title</a> | <a href="?browse=genre#results">Genre</a> | <a href="?browse=year#results">Year</a>
+<BR><strong> or Browse by: </strong> <a href="?index=<?=INDEX?>&browse=author#results">Author</a> | <a href="?index=<?=INDEX?>&browse=title#results">Title</a> | <a href="?index=<?=INDEX?>&browse=genre#results">Genre</a> | <a href="?index=<?=INDEX?>&browse=year#results">Year</a>
 
 <P><input type=submit>
 </form>
