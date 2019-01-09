@@ -1,0 +1,14 @@
+{
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "require": {
+        "atk4/dsql": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+		 "Wittlib\\": "src/Wittlib"
+	}
+    }   
+
+}
