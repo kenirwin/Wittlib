@@ -22,6 +22,10 @@ else {
         define('TABLE','pholeos');
         define('FORM','search_form_pholeos.php');
         break;
+    case 'writing':
+        define('TABLE','student_writing');
+        define('FORM','search_form_writing.php');
+        break;
     }
 
 $db = new SearchTable();
@@ -76,6 +80,7 @@ elseif (isset($_REQUEST['search']) || isset($genre)) {
         echo "<tr><th align=left>Author</th><th align=left>Title</th><th align=left>Genre</th><th align=left>Volume (Year)</th> <th>Pages</th>\n";
         foreach ($results as $myrow) {
             extract($myrow);
+            if (array_key_exists('pages',$myrow)) { $page = $pages; }
             echo "<tr><td>$author</td> <td>$title</td> <td>$genre</td> <td>$volume ($year)</td> <td>$page</td></tr>\n";
         }
         echo "</table>\n";
