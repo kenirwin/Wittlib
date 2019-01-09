@@ -4,4 +4,4 @@
 
 1. Clone the repo
 2. Run `curl -sS https://getcomposer.org/installer | php`
-3. Run `composer update`
+3. Run `php composer.phar update`
