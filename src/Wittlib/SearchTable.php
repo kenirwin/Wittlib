@@ -25,7 +25,7 @@ class SearchTable {
     $return = $this->q->getOne();
     return $return;
   }
-  public function booleanAnd(string $table, string $terms, array $fields) {
+    public function booleanAnd(string $table, string $terms, array $fields, array $conf) {
     $this->q->table($table);
     $terms = preg_split('/\s+/',$terms);
 
@@ -38,5 +38,7 @@ class SearchTable {
       $or_str = [$or_arr];
       $this->q->where($or_arr);
     }
-  }
+    return $this->q->get();
+    }
+
 }
