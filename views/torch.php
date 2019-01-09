@@ -129,16 +129,16 @@ if (isset($_REQUEST['terms'])) {
             // prefer local fulltext to remote URL
             if (isset($fulltext) && ($fulltext != "N")) { $title ="<a href=\"http://".$_SERVER['SERVER_NAME']."/lib/witt_pubs/torch/archive/?file=$fulltext\">$title</a>\n"; }
             elseif ($url) { $title = "<a href=\"$url\">$title</a>\n"; }
-            if (preg_match("/$year/", $sql_date)) {
+            if (isset($sql_date) && preg_match("/$year/", $sql_date)) {
                 $date = date_format(date_create($sql_date),'n/j');
             }
             $class = "";
             
-            if ($unfindable == "Y") { 
+            if (isset($unfindable) && $unfindable == "Y") { 
                 $class = "class=\"unfindable\""; 
                 $title .= "<span class=\"warning\">Note: this title may exist, but the citation to the print edition appears to be incorrect.</span>";
             }
-            if ($date_on_cover && ($date_on_cover != $sql_date)) {
+            if (isset($date_on_cover) && ($date_on_cover != $sql_date)) {
                 //if the torch issue itself had the incorrect date on the cover
                 $title .= "<span class=\"warning\">Note: this issue of the Torch appeared on <b>" . date("m/d/Y", strtotime($sql_date)) . "</b>, but the cover on the printed issue of the Torch incorrectly listed the date as <b>" . date("m/d/Y", strtotime($date_on_cover)) ."</b>. There may be more than one print issue with the same apparent date.</span>\n";
             }
