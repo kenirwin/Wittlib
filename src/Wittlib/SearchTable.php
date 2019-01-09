@@ -54,21 +54,33 @@ class SearchTable {
     public function booleanAnd(string $table, string $terms, array $fields, array $conf = [], bool $return_results = true) {
         $this->q->table($table);
     $terms = preg_split('/\s+/',$terms);
+    
+    $this->andEveryTermInAnyField($terms, $fields);
 
-    foreach ($terms as $term) {
-      $or_arr = array();
-      foreach ($fields as $field) {
-	$exp = [$field,'like','%'.$term.'%'];
-	array_push($or_arr, $exp);
-      }
-      $or_str = [$or_arr];
-      $this->q->where($or_arr);
-    }
     /* KEN: can you replace this with ->applyConf() ? */
     if (array_key_exists('orderby', $conf)) {
         $this->q->order($conf['orderby']);
     }
     if ($return_results) { return $this->q->get(); }
     }
+    
+    public function andEveryTermInAnyField (array $terms, array $fields) {
+        foreach ($terms as $term) {
+            $or_arr = array();
+            foreach ($fields as $field) {
+                $exp = [$field,'like','%'.$term.'%'];
+                array_push($or_arr, $exp);
+            }
+            $this->q->where($or_arr);
+        }
+    }
 
+    public function andAnyTermInOneField (array $terms, string $field) {
+        $or_arr = array();
+        foreach ($terms as $term) {
+            $exp = [$field,'like',$term];
+            array_push($or_arr,$exp);
+        }
+        $this->q->where($or_arr);
+    }
 }
