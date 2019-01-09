@@ -41,7 +41,7 @@ print ( GenreCheckbox('miscellaneous') . PHP_EOL );
     ?>
 </td></tr></table>
 
-<BR><strong> or Browse by: </strong> <a href="?browse=author">Author</a> | <a href="?browse=title">Title</a> | <a href="?browse=genre">Genre</a> | <a href="?browse=year">Year</a>
+<BR><strong> or Browse by: </strong> <a href="?index=pholeos&browse=author">Author</a> | <a href="?index=pholeos&browse=title">Title</a> | <a href="?index=pholeos&browse=genre">Genre</a> | <a href="?index=pholeos&browse=year">Year</a>
 
 <P><input type=submit>
 </form>
