@@ -83,4 +83,10 @@ class SearchTable {
         }
         $this->q->where($or_arr);
     }
+
+    public function returnFields (array $fields) {
+        foreach ($fields as $field) {
+            $this->q->field($field);
+        }
+    }
 }
