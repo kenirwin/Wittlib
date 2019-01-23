@@ -88,6 +88,36 @@ class SearchTableTest extends TestCase {
         );
     }
 
+
+    public function testReturnFieldsGetsCorrectFields(): void
+    {
+        $this->db->q->table('items');
+        $this->db->returnFields(['id','name']);
+        $data = $this->db->q->get();
+        $this->assertEquals(
+            2,
+            sizeof($data[0])
+        );
+
+        $this->assertTrue(
+            array_key_exists('id',$data[0])
+        );
+
+        $this->assertTrue(
+            array_key_exists('name',$data[0])
+        );
+        
+        $this->assertFalse(
+            array_key_exists('price',$data[0])
+        );
+    }
+    /* need to add tests for:
+       applyConf()
+       booleanAnd()
+       andEveryTermInAnyField()
+       andAnyTermInOneField()
+    */
+    
     protected function createTable() {
         $this->db->initializeQuery();
         $query = "
