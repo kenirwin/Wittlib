@@ -8,7 +8,12 @@
     "autoload": {
         "psr-4": {
 		 "Wittlib\\": "src/Wittlib"
-	}
-    }   
+	    }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wittlib\\Test\\": "tests/"
+        }
+    }
 
 }
