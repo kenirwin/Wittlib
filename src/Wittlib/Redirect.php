@@ -5,9 +5,23 @@ namespace Wittlib;
 use \atk4\dsql\Query;
 
 class Redirect {
-    public function __construct ($id) {
+    public function __construct ($id=null, $resolve_now = true) {
         $this->c = \atk4\dsql\Connection::connect(DSN,USER,PASS);
         $this->errors = array();
+        $this->declareId($id);
+
+        /* for testing purposes, we may not resolve right away */
+        if ($resolve_now) {
+            $this->resolveNow($this->id);
+        }
+        
+    }
+    
+    public function declareId($id) {
+        $this->id = $id;
+    }
+    
+    public function resolveNow($id) {
         $this->resolveURL($id);
         if ($this->hasErrors()) {
             return false;
