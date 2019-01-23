@@ -6,15 +6,21 @@ use \atk4\dsql\Query;
 
 class SearchTable {
 
-    public function __construct () {
-        $this->c = \atk4\dsql\Connection::connect(DSN,USER,PASS);
-        
-        $this->q = $this->c->dsql(); //new Query();
-        /*->table('user')->where('id',1)->field('name');
-          print($q->render());
-          print_r($q->params);
-        */
+    public function __construct ($autoconnect = true) {
+        if ($autoconnect) {
+            $this->dbConnect();
+        }
     }
+
+    public function dbConnect() {
+        $this->c = \atk4\dsql\Connection::connect(DSN,USER,PASS);
+        $this->initializeQuery();
+    }
+
+    public function initializeQuery() {
+        $this->q = $this->c->dsql(); //new Query();
+    }
+
     public function getFirst($table, $field) {
         $this->q->table($table)->field($field)->limit(1,0)->order($field.' ASC');
         $return = $this->q->getOne();

@@ -28,11 +28,13 @@ else {
         break;
     }
 
-$db = new SearchTable();
-$start_date = $db->getFirst(TABLE,'year');
-$db = new SearchTable();
-$end_date = $db->getLast(TABLE,'year');
-include (FORM);
+    //$db = new SearchTable();
+    $db = new SearchTable;
+    $start_date = $db->getFirst(TABLE,'year');
+    $db->initializeQuery();
+    //    $db = new SearchTable();
+    $end_date = $db->getLast(TABLE,'year');
+    include (FORM);
 
 if (isset($_REQUEST['browse'])) {
     $browse = $_REQUEST['browse'];
@@ -40,7 +42,8 @@ if (isset($_REQUEST['browse'])) {
     if ($browse == 'year') {
         $params['direction'] = 'DESC';
     }
-    $db = new SearchTable();
+    //    $db = new SearchTable();
+    $db = new SearchTable;
     $results = $db->getDistinct(TABLE,$browse,$params);
     foreach ($results as $row) {
         if (($browse == "author")|| ($browse == "year") || ($browse == "title")){
@@ -62,7 +65,8 @@ elseif (isset($_REQUEST['search']) || isset($genre)) {
     else {$fields = array($fields);}
     
     if ((sizeof($genre) == 0) || ($genre[0]== "any") || (! ($genre))) {
-        $db = new SearchTable(); 
+        //        $db = new SearchTable(); 
+        $db = new SearchTable;
         $genre = array_filter($db->getDistinct(TABLE, 'genre'));
     }
 

@@ -4,9 +4,8 @@ namespace Wittlib\Test;
 
 require dirname( dirname(__FILE__) ) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
-//use \PDO;
 use PHPUnit\Framework\TestCase;
-use Wittlib\TestableSearch;
+use Wittlib\SearchTable;
 use \atk4\dsql\Query;
 
 
@@ -14,15 +13,12 @@ define ('DSN','sqlite::memory:');
 define ('USER',null);
 define ('PASS',null);
 
-class TestableSearchTest extends TestCase {
+class SearchTableTest extends TestCase {
     public function setUp() {
-        $this->db = new TestableSearch();
-        $this->db->DbConnect();
+        $this->db = new SearchTable();
         $this->createTable();
         $this->populateTable();
         $this->db->initializeQuery(); //setup next query
-        //        var_dump($this->db->c);
-
     }
 
     public function tearDown() {
@@ -41,9 +37,9 @@ class TestableSearchTest extends TestCase {
             'this->db->c should be a dsql Connection'
         );
         $this->assertEquals(
-            'Wittlib\TestableSearch',
+            'Wittlib\SearchTable',
             get_class($this->db),
-            'this->db should be a Wittlib\TestableSearch'
+            'this->db should be a Wittlib\SearchTable'
         );
     }
 

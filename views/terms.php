@@ -9,8 +9,8 @@ getConfig('witt_pubs');
 use Wittlib\SearchTable;
 
 try {
-$db = new SearchTable();
-$return_arr = array();
+    $db = new SearchTable();
+    $return_arr = array();
 /* If connection to database, run sql statement. */
 if ($db)
   {

@@ -122,7 +122,8 @@ function ShowLoanRules ($ptype) {
 			"ohiolink_media" => "OhioLINK Audio/Video",
 			"searchohio_book" => "SearchOhio Books, Audio Books, Music",                   "searchohio_media" => "SearchOhio DVDs");
 
-  $db = new SearchTable();
+  //  $db = new SearchTable();
+  $db = new SearchTable;
   $db->q->table('loan_rules')
       ->where('ptype',$ptype);
   $rows = $db->q->get();

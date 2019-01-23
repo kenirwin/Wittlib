@@ -86,7 +86,8 @@ $(document).ready(function() {
 /*******
  * GET BASIC # / Title Associations for later use
  *******/
-$db = new SearchTable();
+//$db = new SearchTable();
+$db = new SearchTable;
 $db->q->table('db_new');
 $rows = $db->q->get();
 foreach ($rows as $row) {
