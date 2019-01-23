@@ -74,6 +74,24 @@ class TestableSearchTest extends TestCase {
         );
     }
 
+    public function testDistinctPriceReturnsTwoValues(): void
+    {
+        $data = $this->db->getDistinct('items','price');
+        $this->assertEquals(
+            2,
+            sizeof($data)
+        );
+    }
+
+    public function testReturnsDistinctValues(): void
+    {
+        $data = $this->db->getDistinct('items','price');
+        $this->assertNotEquals(
+            $data[0],
+            $data[1]
+        );
+    }
+
     protected function createTable() {
         $this->db->initializeQuery();
         $query = "

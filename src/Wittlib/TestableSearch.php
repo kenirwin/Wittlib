@@ -19,13 +19,11 @@ class TestableSearch {
 
     public function getFirst($table, $field) {
         $this->q->table($table)->field($field)->limit(1,0)->order($field.' ASC');
-        print ('getFirst: '. $this->q->render());
         $return = $this->q->getOne();
         return $return;
     }
     public function getLast($table, $field) {
         $this->q->table($table)->field($field)->limit(1,0)->order($field.' DESC');
-        print ('getLast: '. $this->q->render());
         $return = $this->q->getOne();
         return $return;
     }
