@@ -23,7 +23,7 @@ class RedirectTest extends TestCase {
     public function tearDown() {
         unset($this->db);
     }
-
+    /*
     public function testHasThreeRows() {
         // this tests the setup, not the Redirect class
         $data = $this->db->q->table('db_new')->get();
@@ -32,7 +32,7 @@ class RedirectTest extends TestCase {
             sizeof($data)
         );
     }
-    
+    */
     public function testCanDeclareId() {
         $this->db->declareId(1);
         $this->assertEquals(
@@ -42,11 +42,17 @@ class RedirectTest extends TestCase {
     }
 
     public function testResolvesSimple() {
-        $data = $this->db->resolveNow(1);
-        $this->assertEquals(
-            'http://www.nexisuni.com',
-            $this->db->url
-        );
+        $resolved = [ 1 => 'http://www.nexisuni.com',
+                      3 => 'http://www.nexisuni.com'
+        ];
+
+        foreach ($resolved as $id => $final_url) {
+            $data = $this->db->resolveNow(1);
+            $this->assertEquals(
+                $final_url,
+                $this->db->url
+            );
+        }
     }
 
     private function initializeQuery() {
@@ -75,7 +81,7 @@ PRIMARY KEY(`id`)
         $queries = [
             "INSERT INTO `db_new` VALUES (1,'NexisUni','http://www.nexisuni.com',null,null,null,null,null,null);",
             "INSERT INTO `db_new` VALUES (2,'Academic Search Complete','http://www.ebscohost.com/asc',null,null,null,null,null,null);",
-            "INSERT INTO `db_new` VALUES (3,'LexisNexis','http://www.lexisnexis.com',null,null,null,null,null,null);"
+            "INSERT INTO `db_new` VALUES (3,'LexisNexis','http://www.lexisnexis.com',1,null,null,null,null,null);" //route to 1
         ];
         
         foreach ($queries as $query) {
