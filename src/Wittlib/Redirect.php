@@ -71,8 +71,6 @@ class Redirect {
         if ($this->use_new_db !== null) { 
             $replacements = preg_split('/;/',$this->use_new_db);
             $titles = array();
-            var_dump($titles);
-            var_dump($replacements);
             foreach ($replacements as $id) {
                 $titles[$id] = $this->getTitle($id);
             }
@@ -82,6 +80,10 @@ class Redirect {
                     $urls .= '<li><a href="/redirect.php?'.$id.'">'.$title.'</a>'.PHP_EOL;
                 }
             }
+            /*
+            print 'Titles:'.PHP_EOL; var_dump($titles);
+            print 'Alt: '.PHP_EOL;var_dump($replacements);
+            */
             $this->alternatives = $urls;
         }
     }
