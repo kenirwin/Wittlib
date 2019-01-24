@@ -47,7 +47,7 @@ class RedirectTest extends TestCase {
         ];
 
         foreach ($resolved as $id => $final_url) {
-            $data = $this->db->resolveNow(1);
+            $data = $this->db->resolveNow($id);
             $this->assertEquals(
                 $final_url,
                 $this->db->url
@@ -55,6 +55,13 @@ class RedirectTest extends TestCase {
         }
     }
 
+    public function testReturnsErrorOnCancelled (): void
+    {
+        $data = $this->db->resolveNow(2);
+        $this->assertTrue(
+            array_key_exists('cancelled',$this->db->errors)
+        );
+    }
     private function initializeQuery() {
         $this->db->q = $this->db->c->dsql(); //new Query();
     }
@@ -67,7 +74,7 @@ CREATE TABLE `db_new` (
 `title`TEXT,
 `url`VARCHAR(255),
 `route_to_db`VARCHAR(255),
-`deprecated`,DATE,
+`deprecated`DATE,
 `cancelled`DATE,
 `use_new_db`VARCHAR(11),
 `suppress`CHAR(1),
@@ -79,9 +86,9 @@ PRIMARY KEY(`id`)
 
     protected function populateTable() {
         $queries = [
-            "INSERT INTO `db_new` VALUES (1,'NexisUni','http://www.nexisuni.com',null,null,null,null,null,null);",
-            "INSERT INTO `db_new` VALUES (2,'Academic Search Complete','http://www.ebscohost.com/asc',null,null,null,null,null,null);",
-            "INSERT INTO `db_new` VALUES (3,'LexisNexis','http://www.lexisnexis.com',1,null,null,null,null,null);" //route to 1
+            "INSERT INTO `db_new` VALUES (1,'NexisUni','http://www.nexisuni.com',null,null,null,null,null);",
+            "INSERT INTO `db_new` VALUES (2,'Academic Search Complete','http://www.ebscohost.com/asc',null,null,'2016-01-01',null,null);", //cancelled
+            "INSERT INTO `db_new` VALUES (3,'LexisNexis','http://www.lexisnexis.com',1,null,null,null,null);" //route to 1
         ];
         
         foreach ($queries as $query) {
