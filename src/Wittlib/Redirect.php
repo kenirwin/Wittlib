@@ -7,14 +7,19 @@ use \atk4\dsql\Query;
 class Redirect {
     public function __construct ($id=null, $resolve_now = true) {
         $this->c = \atk4\dsql\Connection::connect(DSN,USER,PASS);
+        $this->resolved = false;
+        $this->message = '';
         $this->errors = array();
         $this->declareId($id);
-
+        /*
+        $this->cancelled = false;
+        $this->suppress = false;
+        $this->use_new_db = false;
+        */
         /* for testing purposes, we may not resolve right away */
         if ($resolve_now) {
             $this->resolveNow($this->id);
         }
-        
     }
     
     public function declareId($id) {
@@ -23,11 +28,13 @@ class Redirect {
     
     public function resolveNow($id) {
         $this->resolveURL($id);
-        if ($this->hasErrors()) {
-            return false;
-        }
         $this->checkCurrent();
         $this->getReplacements($this->id);
+        if ($this->hasErrors()) {
+            $this->message == 'Some message';
+            var_dump($this->message);
+        }
+
     }
 
     private function resolveURL ($id) {
@@ -45,6 +52,9 @@ class Redirect {
                 $this->route_to_db = null;
                 $this->resolveURL($temp);
             }
+            else {
+                $this->resolved = true;
+            }
         }
         else {
             $this->errors['not_found'] = 'This database was not found.';
@@ -53,9 +63,11 @@ class Redirect {
     private function checkCurrent() {
         if (preg_match('/\d\d\d\d-\d\d-\d\d/',$this->cancelled)) {
             $this->errors['cancelled'] = 'This database ('.$this->title.') was cancelled '.date('M Y', strtotime($this->cancelled)).'.'.PHP_EOL;
+            $this->resolved = false;
         }
         if ($this->suppress == 'Y') { 
             $this->errors['suppressed'] = 'This database ('.$this->title.') is no longer available.'.PHP_EOL;
+            $this->resolved = false;
         }
     }
     public function hasErrors() {
