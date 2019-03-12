@@ -11,15 +11,14 @@ class Redirect {
         $this->message = '';
         $this->errors = array();
         $this->declareId($id);
-        /*
         $this->cancelled = false;
         $this->suppress = false;
         $this->use_new_db = false;
-        */
         /* for testing purposes, we may not resolve right away */
         if ($resolve_now) {
             $this->resolveNow($this->id);
         }
+
     }
     
     public function declareId($id) {
@@ -27,6 +26,15 @@ class Redirect {
     }
     
     public function resolveNow($id) {
+        if (preg_match('/^http/',$id)) {
+            $this->url = $id;
+            $this->resolved = true;
+            $this->id = $id;
+        }
+
+        if ($this->resolved) { 
+            return true;
+        }
         $this->resolveURL($id);
         $this->checkCurrent();
         $this->getReplacements($this->id);

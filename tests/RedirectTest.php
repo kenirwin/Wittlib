@@ -52,6 +52,11 @@ class RedirectTest extends TestCase {
                 $final_url,
                 $this->db->url
             );
+
+            $this->assertEquals(
+                true,
+                $this->db->resolved
+            );
         }
     }
 
@@ -63,11 +68,29 @@ class RedirectTest extends TestCase {
         );
     }
 
+    public function testResolvedIsFalseOnCancelledNoForwarding(): void
+    {
+        $data = $this->db->resolveNow(2);
+        $this->assertEquals(
+            false,
+            $this->db->resolved
+        );
+    }
+
     public function testReturnsErrorOnSuppressed (): void
     {
         $data = $this->db->resolveNow(4);
         $this->assertTrue(
             array_key_exists('suppressed',$this->db->errors)
+        );
+    }
+
+    public function testResolvedIsFalseOnSuppressedNoForwarding(): void
+    {
+        $data = $this->db->resolveNow(4);
+        $this->assertEquals(
+            false,
+            $this->db->resolved
         );
     }
 
@@ -83,6 +106,24 @@ class RedirectTest extends TestCase {
         );
     }
 
+    /*    
+    public function testSuppressedWithAltGetsErrorMessage(): void
+    {
+        $data = $this->db->resolveNow(5);
+        $this->assertTrue(
+            strlen($this->db->message) > 0
+        );
+    }
+    */
+
+    public function testDirectUrlReturnsUrl () {
+        $testurl = 'https://search.ebscohost.com/login.aspx?profile=ehost&defaultdb=a9h';
+        $data = $this->db->resolveNow($testurl);
+        $this->assertEquals(
+            $this->db->url,
+            $testurl
+        );
+    }
     private function initializeQuery() {
         $this->db->q = $this->db->c->dsql(); //new Query();
     }
@@ -111,7 +152,7 @@ PRIMARY KEY(`id`)
             "INSERT INTO `db_new` VALUES (2,'Academic Search Complete','http://www.ebscohost.com/asc',null,null,'2016-01-01',null,null);", //cancelled
             "INSERT INTO `db_new` VALUES (3,'LexisNexis','http://www.lexisnexis.com',1,null,null,null,null);", //route to 1
             "INSERT INTO `db_new` VALUES (4,'Axiom','http://firstsearch.org/oldnews',null,null,null,null,'Y');", //suppressed
-            "INSERT INTO `db_new` VALUES (5,'That Old Proquest Database','http://proquest.org/oldnews',null,null,'2010-01-01',2,null);" //cancelled, use new
+            "INSERT INTO `db_new` VALUES (5,'That Old Proquest Database','http://proquest.org/oldnews',null,null,'2010-01-01',2,'Y');" //cancelled, use new
         ];
         
         foreach ($queries as $query) {
