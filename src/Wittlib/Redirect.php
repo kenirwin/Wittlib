@@ -9,11 +9,15 @@ class Redirect {
         $this->c = \atk4\dsql\Connection::connect(DSN,USER,PASS);
         $this->resolved = false;
         $this->message = '';
+        $this->prepend = '';
+        $this->ip = '';
         $this->errors = array();
         $this->declareId($id);
         $this->cancelled = false;
         $this->suppress = false;
         $this->use_new_db = false;
+        $this->setIP();
+
         /* for testing purposes, we may not resolve right away */
         if ($resolve_now) {
             $this->resolveNow($this->id);
@@ -24,15 +28,34 @@ class Redirect {
     public function declareId($id) {
         $this->id = $id;
     }
+
+    public function setIP($ip = null) {
+        if ($ip == null) {
+            if (isset($_ENV['REMOTE_ADDR'])) {
+                $this->ip = $_ENV['REMOTE_ADDR'];
+            }
+        }
+        else { 
+            $this->ip = $ip;
+        }
+        $this->getEzproxyPrefix();
+    }
+
+    public function getEzproxyPrefix() {
+        if ($this->ip != '' && (! preg_match('/^136\.227/',$this->ip))) {
+            $this->prepend = 'https://ezproxy.wittenberg.edu/login?url=';
+        }
+    }
     
     public function resolveNow($id) {
-        if (preg_match('/^http/',$id)) {
+        if (preg_match('/^http/',$id)) { 
+            $this->id = $id;
             $this->url = $id;
             $this->resolved = true;
-            $this->id = $id;
         }
 
         if ($this->resolved) { 
+            $this->url = $this->prepend . $this->url;
             return true;
         }
         $this->resolveURL($id);
@@ -42,7 +65,6 @@ class Redirect {
             $this->message == 'Some message';
             var_dump($this->message);
         }
-
     }
 
     private function resolveURL ($id) {
@@ -53,7 +75,7 @@ class Redirect {
             $info = $this->q->get()[0];
             $this->id = $info['ID'];
             foreach($info as $k=>$v) {
-                $this->$k = $v;
+                $this->$k = $v;       // defines $this->url among others
             }
             if (preg_match('/\d+/',$this->route_to_db)) {
                 $temp=$this->route_to_db;

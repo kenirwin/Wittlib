@@ -124,6 +124,21 @@ class RedirectTest extends TestCase {
             $testurl
         );
     }
+
+    public function testOffCampusIpPrependsEzproxy () {
+        $off_ip = '123.456.78.910';
+        $testurl = 'https://search.ebscohost.com/login.aspx?profile=ehost&defaultdb=a9h';
+        $ezprefix = 'https://ezproxy.wittenberg.edu/login?url=';
+        $this->db->setIP($off_ip);
+        print PHP_EOL.'IP: '.$this->db->ip. PHP_EOL;
+        $this->db->resolveNow($testurl);
+        $this->assertEquals(
+            $this->db->url,
+            $ezprefix . $testurl
+        );
+        
+    }
+
     private function initializeQuery() {
         $this->db->q = $this->db->c->dsql(); //new Query();
     }
