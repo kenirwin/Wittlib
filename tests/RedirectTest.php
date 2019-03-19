@@ -23,6 +23,8 @@ class RedirectTest extends TestCase {
     public function tearDown() {
         unset($this->db);
     }
+
+
     /*
     public function testHasThreeRows() {
         // this tests the setup, not the Redirect class
@@ -33,6 +35,9 @@ class RedirectTest extends TestCase {
         );
     }
     */
+
+
+
     public function testCanDeclareId() {
         $this->db->declareId(1);
         $this->assertEquals(
@@ -105,6 +110,7 @@ class RedirectTest extends TestCase {
             preg_match('/Academic Search Complete/',$this->db->alternatives)
         );
     }
+
 
     /*    
     public function testSuppressedWithAltGetsErrorMessage(): void

@@ -62,8 +62,8 @@ class Redirect {
         $this->checkCurrent();
         $this->getReplacements($this->id);
         if ($this->hasErrors()) {
-            $this->message == 'Some message';
-            var_dump($this->message);
+            $this->message = 'Unable to redirect:'.PHP_EOL;
+            $this->message .= $this->listErrors();
         }
     }
 
@@ -106,6 +106,13 @@ class Redirect {
         }
         else { 
             return false;
+        }
+    }
+
+    public function listErrors() {
+        $return = '';
+        foreach ($this->errors as $key => $value) {
+            $return .= ' * ' . $value . PHP_EOL;
         }
     }
 
