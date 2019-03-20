@@ -114,6 +114,7 @@ class Redirect {
         foreach ($this->errors as $key => $value) {
             $return .= ' * ' . $value . PHP_EOL;
         }
+        return $return;
     }
 
     public function getReplacements($id) {
