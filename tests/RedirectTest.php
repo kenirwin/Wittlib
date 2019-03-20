@@ -12,6 +12,9 @@ define ('DSN','sqlite::memory:');
 define ('USER',null);
 define ('PASS',null);
 
+require dirname( dirname(__FILE__) ) . DIRECTORY_SEPARATOR . 'config.php';
+getProxyConfig();
+
 class RedirectTest extends TestCase {
     public function setUp() {
         $this->db = new Redirect (null,false);

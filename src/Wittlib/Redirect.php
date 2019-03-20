@@ -42,8 +42,8 @@ class Redirect {
     }
 
     public function getEzproxyPrefix() {
-        if ($this->ip != '' && (! preg_match('/^136\.227/',$this->ip))) {
-            $this->prepend = 'https://ezproxy.wittenberg.edu/login?url=';
+        if ($this->ip != '' && (! preg_match(CAMPUS_IP_REGEX,$this->ip))) {
+            $this->prepend = PROXY_PREFIX;
         }
     }
     
