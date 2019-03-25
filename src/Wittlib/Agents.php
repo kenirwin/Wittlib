@@ -1,0 +1,32 @@
+<?php
+$bots =  array ("inktomisearch",
+                "almaden.ibm.com",
+                "bot",
+                "googlebot",
+                "crawl",
+                "slurp",
+                "robot",
+                "spider",
+                "libwww-perl",
+                "livebot",
+                "msnbot",
+                "dcbot",
+                "gigablast",
+                "google.wittenberg",
+                "ezra.wittenberg.edu", // monthly link check
+                "san2.attens.net",
+                "insightbb.com",
+                "adsl.alicedsl.de",
+                "phx.gbl",
+                "twiceler",
+                "enmaxenvision.net",
+                "inhoster.com",
+                "turnitin.com",
+                "looksmart.com",
+                "knology.net",
+                "ph.ph.cox.net",
+                "goo.ne.jp", // search engine
+                "egspd.*ask.com",
+                "become.com",
+);
+?>
