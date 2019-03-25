@@ -17,18 +17,23 @@ class Redirect {
         $this->suppress = false;
         $this->use_new_db = false;
         $this->setIP();
+        $this->redirect_now = false; //overriden by $conf
+        $this->use_proxy = true; //overriden by $conf
+        $this->evalConf($conf); //$conf to override individual settings
 
         /* for testing purposes, we may not resolve right away */
-        if (array_key_exists('resolve_now',$conf)) {
-            $this->resolve_now = $conf['resolve_now'];
-        }
-        else { $this->resolve_now = false; }
         if ($this->resolve_now) {
             $this->resolveNow($this->id);
         }
 
     }
     
+    private function evalConf($conf) {
+        foreach ($conf as $key => $value) {
+            $this->$key = $value;
+        }
+    }
+
     public function declareId($id) {
         $this->id = $id;
     }
