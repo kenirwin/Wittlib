@@ -5,7 +5,7 @@ namespace Wittlib;
 use \atk4\dsql\Query;
 
 class Redirect {
-    public function __construct ($id=null, $resolve_now = true) {
+    public function __construct ($id=null, $conf=array()) {
         $this->c = \atk4\dsql\Connection::connect(DSN,USER,PASS);
         $this->resolved = false;
         $this->message = '';
@@ -19,7 +19,11 @@ class Redirect {
         $this->setIP();
 
         /* for testing purposes, we may not resolve right away */
-        if ($resolve_now) {
+        if (array_key_exists('resolve_now',$conf)) {
+            $this->resolve_now = $conf['resolve_now'];
+        }
+        else { $this->resolve_now = false; }
+        if ($this->resolve_now) {
             $this->resolveNow($this->id);
         }
 

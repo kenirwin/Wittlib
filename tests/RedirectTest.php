@@ -17,7 +17,8 @@ getProxyConfig();
 
 class RedirectTest extends TestCase {
     public function setUp() {
-        $this->db = new Redirect (null,false);
+        $conf = array ('resolve_now' => false);
+        $this->db = new Redirect (null,$conf);
         $this->createTable();
         $this->populateTable();
         $this->initializeQuery(); //setup next query
@@ -26,20 +27,6 @@ class RedirectTest extends TestCase {
     public function tearDown() {
         unset($this->db);
     }
-
-
-    /*
-    public function testHasThreeRows() {
-        // this tests the setup, not the Redirect class
-        $data = $this->db->q->table('db_new')->get();
-        $this->assertEquals(
-            3,
-            sizeof($data)
-        );
-    }
-    */
-
-
 
     public function testCanDeclareId() {
         $this->db->declareId(1);
