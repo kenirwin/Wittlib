@@ -6,6 +6,7 @@ use \atk4\dsql\Query;
 
 class Redirect {
     public function __construct ($id=null, $conf=array()) {
+        $this->debugLog = array();
         $this->c = \atk4\dsql\Connection::connect(DSN,USER,PASS);
         $this->resolved = false;
         $this->message = '';
@@ -17,13 +18,13 @@ class Redirect {
         $this->suppress = false;
         $this->use_new_db = false;
         $this->setIP();
-        $this->redirect_now = false; //overriden by $conf
+        $this->resolve_now = true; //overriden by $conf
         $this->use_proxy = true; //overriden by $conf
         $this->evalConf($conf); //$conf to override individual settings
 
         /* for testing purposes, we may not resolve right away */
         if ($this->resolve_now) {
-            $this->resolveNow($this->id);
+            $this->resolveNow($this->id,$conf);
         }
 
     }
@@ -32,10 +33,12 @@ class Redirect {
         foreach ($conf as $key => $value) {
             $this->$key = $value;
         }
+        $this->logAction(__function__);
     }
 
     public function declareId($id) {
         $this->id = $id;
+        $this->logAction(__function__);
     }
 
     public function setIP($ip = null) {
@@ -47,16 +50,26 @@ class Redirect {
         else { 
             $this->ip = $ip;
         }
-        $this->getEzproxyPrefix();
+        $this->logAction(__function__);
     }
 
     public function getEzproxyPrefix() {
         if ($this->ip != '' && (! preg_match(CAMPUS_IP_REGEX,$this->ip))) {
-            $this->prepend = PROXY_PREFIX;
+            if ($this->use_proxy == true) {
+                $this->prepend = PROXY_PREFIX;
+            }
+            else { 
+                $this->prepend = '';
+            }
         }
+        $this->logAction(__function__);
     }
     
-    public function resolveNow($id) {
+    public function resolveNow($id, $conf=array()) {
+        if ($conf !== null) {
+            $this->evalConf($conf); //rerun to catch test-uses of $conf
+        }
+        $this->getEzproxyPrefix();
         if (preg_match('/^http/',$id)) { 
             $this->id = $id;
             $this->url = $id;
@@ -74,6 +87,7 @@ class Redirect {
             $this->message = 'Unable to redirect:'.PHP_EOL;
             $this->message .= $this->listErrors();
         }
+        $this->logAction(__function__);
     }
 
     private function resolveURL ($id) {
@@ -98,6 +112,7 @@ class Redirect {
         else {
             $this->errors['not_found'] = 'This database was not found.';
         }
+        $this->logAction(__function__);
     }
     private function checkCurrent() {
         if (preg_match('/\d\d\d\d-\d\d-\d\d/',$this->cancelled)) {
@@ -108,6 +123,7 @@ class Redirect {
             $this->errors['suppressed'] = 'This database ('.$this->title.') is no longer available.'.PHP_EOL;
             $this->resolved = false;
         }
+        $this->logAction(__function__);
     }
     public function hasErrors() {
         if (sizeof($this->errors) > 0) {
@@ -116,6 +132,7 @@ class Redirect {
         else { 
             return false;
         }
+        $this->logAction(__function__);
     }
 
     public function listErrors() {
@@ -124,6 +141,7 @@ class Redirect {
             $return .= ' * ' . $value . PHP_EOL;
         }
         return $return;
+        $this->logAction(__function__);
     }
 
     public function getReplacements($id) {
@@ -145,12 +163,18 @@ class Redirect {
             */
             $this->alternatives = $urls;
         }
+        $this->logAction(__function__);
     }
 
     public function getTitle($id) {
         $next = $this->c->dsql(); //new Query();
         $next->table('db_new')->where('ID',$id)->field('title');
         return $next->getRow()['title'];
+        $this->logAction(__function__);
+    }
+
+    private function logAction($note) {
+        array_push($this->debugLog, $note);
     }
 }
 ?>
