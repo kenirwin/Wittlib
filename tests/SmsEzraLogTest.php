@@ -92,16 +92,12 @@ class SmsEzraLogTest extends TestCase {
 
     public function createTables() {
         $db_new_structure = "
-CREATE TABLE `db_new` (
-`ID`INTEGER,
-`title`TEXT,
-`url`VARCHAR(255),
-`route_to_db`VARCHAR(255),
-`deprecated`DATE,
-`cancelled`DATE,
-`use_new_db`VARCHAR(11),
-`suppress`CHAR(1),
-PRIMARY KEY(`id`)
+CREATE TABLE `sms_reqs` (
+  `title` varchar(255) DEFAULT NULL,
+  `call` varchar(255) DEFAULT NULL,
+  `loc` varchar(255) DEFAULT NULL,
+  `avail` varchar(255) DEFAULT NULL,
+  `timestamp` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
 )";
         
         $this->executeQuery($db_new_structure);
