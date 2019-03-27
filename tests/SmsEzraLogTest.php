@@ -20,6 +20,10 @@ class SmsEzraLogTest extends TestCase {
         //'testtitle','testitem',"Location: CRC WHITE Call \#: PZ8.3.G276 Hn 1991  (AVAILABLE )");
         $this->createTables();
         $this->initializeQuery(); //setup next query
+        $this->good_params = array('title'=>'Hop on Pop',
+                             'number'=>'9371234567',
+                             'item'=>'Location: CRC WHITE'."\n".' Call #: PZ8.3.G276 Hn 1991 (AVAILABLE)');
+
     }
 
     /* tests */
@@ -61,14 +65,18 @@ class SmsEzraLogTest extends TestCase {
     }
 
     public function testPrepsSmsBody() {
-        $params = array('title'=>'Hop on Pop',
-                        'number'=>'9371234567',
-                        'item'=>'Location: CRC WHITE; Call #: PZ8.3.G276 Hn 1991 (AVAILABLE)');
-        $this->db->setParams($params);
+        $this->db->setParams($this->good_params);
         $this->assertRegExp('/CRC WHITE/',$this->db->smsBody);
         $this->assertRegExp('/.*Hop on Pop/',$this->db->smsBody);
     }
 
+    public function testParsesItem() {
+        $this->db->setParams($this->good_params);
+        $this->assertRegExp('/CRC WHITE/',$this->db->location);
+        $this->assertRegExp('/Hop on Pop/',$this->db->title);
+        $this->assertRegExp('/AVAILABLE/',$this->db->avail);
+    }
+    
 
     /* utility functions */
 

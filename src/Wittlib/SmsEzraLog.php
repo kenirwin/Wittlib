@@ -26,7 +26,7 @@ class SmsEzraLog {
         if (sizeof($this->invalidArgs) == 0) {
             $this->paramsOk = true;
             $this->prepSmsBody();
-        
+            $this->parseItem();
         }
 
         /*        
@@ -58,6 +58,17 @@ class SmsEzraLog {
         $this->smsBody = $body;
     }
 
+    private function parseItem() {
+        $this->item = preg_replace('/\n/',' ',$this->item);
+        if (preg_match("/Location: *([A-Z\/ ]+) *Call #: *([^\(]+)\((.*)\)/", $this->item, $m))
+        //        if (preg_match("/Location: *([A-Z\/ ]+) *Call \#: *(.*)/", $this->item, $m))
+        {
+            $this->location = chop($m[1]);
+            $this->call = chop($m[2]);
+            $this->avail = chop($m[3]);
+        }
+    }
+    
     public function logBookInfo() {
         
     }
