@@ -70,7 +70,19 @@ class SmsEzraLog {
     }
     
     public function logBookInfo() {
-        
+        try {
+            $this->q = $this->c->dsql(); //new Query();
+            $this->q->table('sms_reqs')
+                ->set('title',$this->title)
+                ->set('call',$this->call)
+                ->set('loc',$this->location)
+                ->set('avail',$this->avail)
+                ->set('timestamp',$this->timestamp)
+                ->insert();
+            $this->loggedReqOk = true;
+        } catch (Exception $e) {
+            $this->loggedReqOk = false;
+        }
     }
     
     public function updateSmsStats() {

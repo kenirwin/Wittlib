@@ -77,6 +77,11 @@ class SmsEzraLogTest extends TestCase {
         $this->assertRegExp('/AVAILABLE/',$this->db->avail);
     }
     
+    public function testWritesToSmsRequestLog() {
+        $this->db->setParams($this->good_params);
+        $this->db->logBookInfo();
+        $this->assertTrue($this->db->loggedReqOk);
+    }
 
     /* utility functions */
 
