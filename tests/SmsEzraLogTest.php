@@ -20,7 +20,6 @@ class SmsEzraLogTest extends TestCase {
         //'testtitle','testitem',"Location: CRC WHITE Call \#: PZ8.3.G276 Hn 1991  (AVAILABLE )");
         $this->createTables();
         $this->initializeQuery(); //setup next query
-
     }
 
     /* tests */
@@ -32,10 +31,36 @@ class SmsEzraLogTest extends TestCase {
         );
     }
 
+    public function testReturnsErrorIfEmptyParams() {
+        $this->db->setParams(array());
+        $this->assertFalse($this->db->paramsOk);
+    }
 
+    public function testReturnsErrorIfMissingTitleParam() {
+        $missing_title = array('item'=>'test','loc'=>'test','number'=>'1234567890');
+        $this->db->setParams($missing_title);
+        $this->assertFalse($this->db->paramsOk);
+    }
+
+    public function testReturnsErrorIfMissingItemParam() {
+        $missing_item = array('title'=>'test','number'=>'1234567890');
+        $this->db->setParams($missing_item);
+        $this->assertFalse($this->db->paramsOk);
+    }
+
+    public function testReturnsErrorIfHasAllParam() {
+        $params = array('title'=>'test','item'=>'test','number'=>'1234567890');
+        $this->db->setParams($params);
+        $this->assertTrue($this->db->paramsOk);
+    }
+
+    public function testReturnsErrorIfNumberNotTenDigits() {
+        $ninedigits = array('title'=>'test','item'=>'test','number'=>'123456789');
+        $this->db->setParams($ninedigits);
+        $this->assertFalse($this->db->paramsOk);        
+    }
 
     /* utility functions */
-
 
     public function tearDown() {
         unset($this->db);
@@ -48,8 +73,7 @@ class SmsEzraLogTest extends TestCase {
 
 
     public function createTables() {
-        $this->executeQuery(
-        $query = "
+        $db_new_structure = "
 CREATE TABLE `db_new` (
 `ID`INTEGER,
 `title`TEXT,
@@ -60,8 +84,9 @@ CREATE TABLE `db_new` (
 `use_new_db`VARCHAR(11),
 `suppress`CHAR(1),
 PRIMARY KEY(`id`)
-);
-");
+)";
+        
+        $this->executeQuery($db_new_structure);
     }
 
     public function executeQuery($query) {
