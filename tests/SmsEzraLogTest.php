@@ -60,6 +60,16 @@ class SmsEzraLogTest extends TestCase {
         $this->assertFalse($this->db->paramsOk);        
     }
 
+    public function testPrepsSmsBody() {
+        $params = array('title'=>'Hop on Pop',
+                        'number'=>'9371234567',
+                        'item'=>'Location: CRC WHITE; Call #: PZ8.3.G276 Hn 1991 (AVAILABLE)');
+        $this->db->setParams($params);
+        $this->assertRegExp('/CRC WHITE/',$this->db->smsBody);
+        $this->assertRegExp('/.*Hop on Pop/',$this->db->smsBody);
+    }
+
+
     /* utility functions */
 
     public function tearDown() {
