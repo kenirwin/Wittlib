@@ -108,32 +108,6 @@ CREATE TABLE `sms_reqs` (
         $this->db->q->Expr($query)->execute($this->db->c);
     }
 
-
-
-
-    /*
-    private function initializeQuery() {
-        $this->q = $this->log->c->dsql(); //new Query();
-    }
-
-    private function createTables() {
-        $this->createTable("CREATE TABLE IF NOT EXISTS `sms_reqs` (
-  `title` varchar(255) DEFAULT NULL,
-  `call` varchar(255) DEFAULT NULL,
-  `loc` varchar(255) DEFAULT NULL,
-  `avail` varchar(255) DEFAULT NULL,
-  `timestamp` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
-) DEFAULT CHARSET=utf8;
-");
-
-    }
-
-    private function createTable($query) {
-        $this->initializeQuery();
-        $this->q->Expr($query)->execute($this->log->c);
-    }
-
-    */
 }
 
 ?>
