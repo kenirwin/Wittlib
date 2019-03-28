@@ -123,6 +123,9 @@ CREATE TABLE IF NOT EXISTS `sms_users` (
   `carrier_updated` date NOT NULL,
   PRIMARY KEY (`id`)
 )";
+        $num = '9375555555';
+        $crypt = crypt($num,'sms');
+        $sms_users_data = "INSERT INTO `sms_users` (`id`, `crypt`, `n`, `most_recent`, `carrier`, `carrier_updated`) VALUES (1, '$crypt', 72, '2019-03-27', 'Bogus Carrier', '2019-03-18');";
 
         /*
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -136,6 +139,7 @@ CREATE TABLE IF NOT EXISTS `sms_users` (
 
         $this->executeQuery($sms_reqs_structure);
         $this->executeQuery($sms_users_structure);
+        $this->executeQuery($sms_users_data);
     }
 
     public function executeQuery($query) {
