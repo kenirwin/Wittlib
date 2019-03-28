@@ -24,7 +24,9 @@ class SmsEzraLogTest extends TestCase {
         $this->good_params = array('title'=>'Hop on Pop',
                              'number'=>'9371234567',
                              'item'=>'Location: CRC WHITE'."\n".' Call #: PZ8.3.G276 Hn 1991 (AVAILABLE)');
-
+        $this->alt_params =  array('title'=>'Hop on Pop',
+                             'number'=>'937555555',
+                             'item'=>'Location: CRC WHITE'."\n".' Call #: PZ8.3.G276 Hn 1991 (AVAILABLE)');
     }
 
     /* tests */
@@ -84,11 +86,27 @@ class SmsEzraLogTest extends TestCase {
         $this->assertTrue($this->db->loggedReqOk);
     }
 
-    public function testWritesEncryptedNumberToLog() {
+    public function testWritesEncryptedNumberToUserLog() {
         $this->db->setParams($this->good_params);
         $this->db->carrier = 'Bogus Carrier';
         $this->db->logUserInfo();
         $this->assertTrue($this->db->loggedUserOk);
+    }
+
+    public function testUpdatesReusedNumberInUserLog() {
+        /* alt_params defines a user who already has an entry 
+           which should increment
+        */
+        $this->db->setParams($this->alt_params);
+        $this->db->carrier = 'Bogus Carrier';
+        $this->db->logUserInfo();
+        //        $this->assertTrue($this->db->loggedUserOk);        
+
+        $this->initializeQuery(); 
+        $r = $this->db->q->table('sms_users')
+           ->field('n')->where('crypt',$this->db->crypt)->get();
+        $new_n = $r[0]['n']; // expect 72+1 = 73
+        $this->assertEquals(73,$new_n);
     }
 
     /* utility functions */

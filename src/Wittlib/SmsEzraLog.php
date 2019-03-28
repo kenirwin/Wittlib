@@ -13,6 +13,7 @@ class SmsEzraLog {
         $this->timestamp = date ('Y-m-d H:i:s');
         $this->smsBody = '';
         $this->carrier = 'unknown';
+        $this->loggedUserOk = false;
     }
 
     public function setParams($request) {
@@ -44,6 +45,7 @@ class SmsEzraLog {
         $num = $this->number;
         // remove all non-digits from phone 
         $num = preg_replace("/[^\d]/", "", $num); 
+        $this->number = $num; //save version with no punctuation for logging
         if (strlen($num) == 10) {
             $this->toNumber = '+1' . $num;
         }
@@ -88,21 +90,27 @@ class SmsEzraLog {
     }
     
     public function logUserInfo() {
-        $crypt = crypt($this->number,'sms');
+        $this->crypt = crypt($this->number,'sms');
         $date = date ('Y-m-d');
         try {
             $this->q = $this->c->dsql(); //new Query();
             $this->q->table('sms_users')
-                ->where('crypt',$crypt);
+                ->where('crypt',$this->crypt);
             $existing_user = ($this->q->get());
             if (sizeof($existing_user) > 0) {
-                //update
+                $this->q = $this->c->dsql(); //new Query();
+                $n = $existing_user[0]['n'];
+                $n++;
+                $this->q->table('sms_users')
+                    ->set('n',$n)
+                    ->update();
+                $this->loggedUserOk = true;
             }
             else {
             $this->q = $this->c->dsql(); //new Query();                
             $this->q->table('sms_users')
                 ->set('id',null)
-                ->set('crypt',$crypt)
+                ->set('crypt',$this->crypt)
                 ->set('n',1)
                 ->set('most_recent',$date)
                 ->set('carrier',$this->carrier)
