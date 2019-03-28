@@ -128,13 +128,28 @@ class SmsEzraLog {
     }
 
     public function logCarrierInfo() {
-        try {
+        try { 
             $this->q = $this->c->dsql(); //new Query();                
-            $this->q->table('sms_stats')
-                ->where('carrier',$this->carrier)
-                ->set('total',$this->q->Expr('total+1'))
-                ->update();
-            $this->loggedCarrierOk = true;
+            $r = $this->q->table('sms_stats')
+               ->where('carrier',$this->carrier)
+               ->get();
+            if (sizeof($r) > 0) { 
+                $this->q = $this->c->dsql(); //new Query();                
+                $this->q->table('sms_stats')
+                    ->where('carrier',$this->carrier)
+                    ->set('total',$this->q->Expr('total+1'))
+                    ->update();
+                $this->loggedCarrierOk = true;
+            }
+            else {
+                $this->q = $this->c->dsql(); //new Query();                
+                $this->q->table('sms_stats')
+                    ->set('carrier',$this->carrier)
+                    ->set('total',1)
+                    ->set('most_recent',date('Y-m-d'))
+                    ->insert();
+                $this->loggedCarrierOk = true;
+            }
         } catch (Exception $e) {
             print $e->getMessage();
             var_dump($e);

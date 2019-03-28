@@ -122,6 +122,19 @@ class SmsEzraLogTest extends TestCase {
         $this->assertEquals(6,$new_total);
     }
 
+    public function testAddNewCarrierWhenNecessary() {
+        $this->db->setParams($this->alt_params);
+        $this->db->carrier = 'New Carrier';
+        $this->db->logCarrierInfo();
+        $this->assertTrue($this->db->loggedCarrierOk);
+
+        $this->initializeQuery(); 
+        $r = $this->db->q->table('sms_stats')
+           ->field('total')->where('carrier',$this->db->carrier)->get();
+        $new_total = $r[0]['total']; // expect 5+1 = 6
+        $this->assertEquals(1,$new_total);
+    }
+
     /* utility functions */
 
     public function tearDown() {
