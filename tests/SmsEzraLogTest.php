@@ -12,6 +12,7 @@ use Wittlib\TwilioFunctions;
 define ('DSN','sqlite::memory:');
 define ('USER',null);
 define ('PASS',null);
+define ('SMS_LOG_SALT','saltydog');
 
 class SmsEzraLogTest extends TestCase {
     use AssertThrows;
@@ -25,7 +26,7 @@ class SmsEzraLogTest extends TestCase {
                              'number'=>'9371234567',
                              'item'=>'Location: CRC WHITE'."\n".' Call #: PZ8.3.G276 Hn 1991 (AVAILABLE)');
         $this->alt_params =  array('title'=>'Hop on Pop',
-                             'number'=>'937555555',
+                             'number'=>'937-555-5555',
                              'item'=>'Location: CRC WHITE'."\n".' Call #: PZ8.3.G276 Hn 1991 (AVAILABLE)');
     }
 
@@ -55,7 +56,7 @@ class SmsEzraLogTest extends TestCase {
         $this->assertFalse($this->db->paramsOk);
     }
 
-    public function testReturnsErrorIfHasAllParam() {
+    public function testReturnsOkIfHasAllParam() {
         $params = array('title'=>'test','item'=>'test','number'=>'1234567890');
         $this->db->setParams($params);
         $this->assertTrue($this->db->paramsOk);
@@ -65,6 +66,15 @@ class SmsEzraLogTest extends TestCase {
         $ninedigits = array('title'=>'test','item'=>'test','number'=>'123456789');
         $this->db->setParams($ninedigits);
         $this->assertFalse($this->db->paramsOk);        
+    }
+    
+    public function testEncryptsNumberOnParamSubmit() {
+        $this->db->setParams($this->good_params);
+        $this->assertTrue(isset($this->db->crypt));
+    }
+    public function testEncryptsAltNumberOnParamSubmit() {
+        $this->db->setParams($this->alt_params);
+        $this->assertTrue(isset($this->db->crypt));
     }
 
     public function testPrepsSmsBody() {
@@ -86,13 +96,26 @@ class SmsEzraLogTest extends TestCase {
         $this->assertTrue($this->db->loggedReqOk);
     }
 
+    public function testIdentifiesNewUser () {
+        $this->db->setParams($this->good_params);
+        $this->db->checkIfExistingUser();
+        $this->assertFalse($this->db->existingUser);
+    }
+    
+    public function identifiesReturngingUser () {
+        $this->db->setParams($this->alt_params);
+        $this->db->checkIfExistingUser();
+        $this->assertTrue($this->db->existingUser);
+        $this->assertEquals('Bogus Carrier',$this->carrier);
+    }
+    /*
     public function testWritesEncryptedNumberToUserLog() {
         $this->db->setParams($this->good_params);
         $this->db->carrier = 'Bogus Carrier';
         $this->db->logUserInfo();
         $this->assertTrue($this->db->loggedUserOk);
     }
-
+    */
     public function testUpdatesReusedNumberInUserLog() {
         /* alt_params defines a user who already has an entry 
            which should increment
@@ -101,7 +124,6 @@ class SmsEzraLogTest extends TestCase {
         $this->db->carrier = 'Bogus Carrier';
         $this->db->logUserInfo();
         $this->assertTrue($this->db->loggedUserOk);        
-
         $this->initializeQuery(); 
         $r = $this->db->q->table('sms_users')
            ->field('n')->where('crypt',$this->db->crypt)->get();
@@ -112,6 +134,7 @@ class SmsEzraLogTest extends TestCase {
     public function testUpdatesCarrierStats() {
         $this->db->setParams($this->alt_params);
         $this->db->carrier = 'Bogus Carrier';
+        $this->db->existingUser = true;
         $this->db->logCarrierInfo();
         $this->assertTrue($this->db->loggedCarrierOk);
 
@@ -125,6 +148,7 @@ class SmsEzraLogTest extends TestCase {
     public function testAddNewCarrierWhenNecessary() {
         $this->db->setParams($this->alt_params);
         $this->db->carrier = 'New Carrier';
+        $this->db->existingUser = false;
         $this->db->logCarrierInfo();
         $this->assertTrue($this->db->loggedCarrierOk);
 
@@ -168,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `sms_users` (
   PRIMARY KEY (`id`)
 )";
         $num = '9375555555';
-        $crypt = crypt($num,'sms');
+        $crypt = crypt($num,SMS_LOG_SALT);
         $sms_users_data = "INSERT INTO `sms_users` (`id`, `crypt`, `n`, `most_recent`, `carrier`, `carrier_updated`) VALUES (1, '$crypt', 72, '2019-03-27', 'Bogus Carrier', '2019-03-18');";
 
         $sms_stats_structure = "

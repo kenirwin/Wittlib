@@ -32,6 +32,7 @@ class SmsEzraLog {
             $this->paramsOk = true;
             $this->prepSmsBody();
             $this->parseItem();
+            $this->crypt = crypt($this->number,SMS_LOG_SALT);
         }
 
         /*        
@@ -90,9 +91,22 @@ class SmsEzraLog {
             $this->loggedReqOk = false;
         }
     }
-    
+
+    public function checkIfExistingUser () {
+        $this->q = $this->c->dsql(); //new Query();
+        $this->q->table('sms_users')
+            ->where('crypt',$this->crypt);
+        $r = $this->q->get();
+        if (sizeof($r)==0) {
+            $this->existingUser = false;
+        }
+        else {
+            $this->existingUser = true;
+            $this->carrier = $r[0]['carrier'];
+        }
+    }
+
     public function logUserInfo() {
-        $this->crypt = crypt($this->number,'sms');
         $date = date ('Y-m-d');
         try {
             $this->q = $this->c->dsql(); //new Query();
@@ -129,11 +143,7 @@ class SmsEzraLog {
 
     public function logCarrierInfo() {
         try { 
-            $this->q = $this->c->dsql(); //new Query();                
-            $r = $this->q->table('sms_stats')
-               ->where('carrier',$this->carrier)
-               ->get();
-            if (sizeof($r) > 0) { 
+            if ($this->existingUser) {
                 $this->q = $this->c->dsql(); //new Query();                
                 $this->q->table('sms_stats')
                     ->where('carrier',$this->carrier)
