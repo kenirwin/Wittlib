@@ -4,7 +4,8 @@
         "jchook/phpunit-assert-throws": "^1.0"
     },
     "require": {
-        "atk4/dsql": "^1.2"
+        "atk4/dsql": "^1.2",
+        "twilio/sdk": "^5.30"
     },
     "autoload": {
         "psr-4": {
