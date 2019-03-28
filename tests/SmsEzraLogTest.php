@@ -100,13 +100,26 @@ class SmsEzraLogTest extends TestCase {
         $this->db->setParams($this->alt_params);
         $this->db->carrier = 'Bogus Carrier';
         $this->db->logUserInfo();
-        //        $this->assertTrue($this->db->loggedUserOk);        
+        $this->assertTrue($this->db->loggedUserOk);        
 
         $this->initializeQuery(); 
         $r = $this->db->q->table('sms_users')
            ->field('n')->where('crypt',$this->db->crypt)->get();
         $new_n = $r[0]['n']; // expect 72+1 = 73
         $this->assertEquals(73,$new_n);
+    }
+
+    public function testUpdatesCarrierStats() {
+        $this->db->setParams($this->alt_params);
+        $this->db->carrier = 'Bogus Carrier';
+        $this->db->logCarrierInfo();
+        $this->assertTrue($this->db->loggedCarrierOk);
+
+        $this->initializeQuery(); 
+        $r = $this->db->q->table('sms_stats')
+           ->field('total')->where('carrier',$this->db->carrier)->get();
+        $new_total = $r[0]['total']; // expect 5+1 = 6
+        $this->assertEquals(6,$new_total);
     }
 
     /* utility functions */
@@ -145,6 +158,37 @@ CREATE TABLE IF NOT EXISTS `sms_users` (
         $crypt = crypt($num,'sms');
         $sms_users_data = "INSERT INTO `sms_users` (`id`, `crypt`, `n`, `most_recent`, `carrier`, `carrier_updated`) VALUES (1, '$crypt', 72, '2019-03-27', 'Bogus Carrier', '2019-03-18');";
 
+        $sms_stats_structure = "
+CREATE TABLE IF NOT EXISTS `sms_stats` (
+  `carrier` varchar(50) NOT NULL DEFAULT '',
+  `total` int(11) NOT NULL DEFAULT '0',
+  `most_recent` date NOT NULL DEFAULT '0000-00-00',
+  PRIMARY KEY (`carrier`)
+)";
+
+        $sms_stats_data = "
+INSERT INTO `sms_stats` (`carrier`, `total`, `most_recent`) VALUES
+('cingular', 465, '2013-03-20'),
+('virgin', 224, '2017-08-31'),
+('tmobile', 570, '2017-11-15'),
+('T-Mobile USA, Inc.', 186, '2019-03-25'),
+('nextel', 6, '2012-10-24'),
+('cricket', 74, '2017-11-16'),
+('centennial', 99, '2013-04-10'),
+('credo', 122, '2015-05-03'),
+('cinbell', 263, '2014-05-11'),
+('AT&T Wireless', 4193, '2019-03-27'),
+('Verizon Wireless', 9334, '2019-03-27'),
+('Sprint Spectrum, L.P.', 2139, '2019-03-27'),
+('US Cellular Corp.', 1, '2018-01-23'),
+('Ameritech - PSTN', 2, '2018-06-21'),
+('Metro PCS, Inc.', 29, '2019-03-28'),
+('Level 3 Communications, LLC', 1, '2018-03-23'),
+('Cricket Wireless - ATT - SVR', 57, '2019-02-28'),
+('Republic Wireless - Bandwidth.com - Sybase365', 2, '2018-08-28'),
+('Bogus Carrier',5,'2018-02-01'),
+('Verizon', 1, '2018-08-30');
+";
         /*
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `crypt` varchar(255) NOT NULL DEFAULT '',
@@ -158,6 +202,8 @@ CREATE TABLE IF NOT EXISTS `sms_users` (
         $this->executeQuery($sms_reqs_structure);
         $this->executeQuery($sms_users_structure);
         $this->executeQuery($sms_users_data);
+        $this->executeQuery($sms_stats_structure);
+        $this->executeQuery($sms_stats_data);
     }
 
     public function executeQuery($query) {

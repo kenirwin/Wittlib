@@ -13,7 +13,9 @@ class SmsEzraLog {
         $this->timestamp = date ('Y-m-d H:i:s');
         $this->smsBody = '';
         $this->carrier = 'unknown';
+        $this->loggedReqOk = false;
         $this->loggedUserOk = false;
+        $this->loggedCarrierOk = false;
     }
 
     public function setParams($request) {
@@ -125,7 +127,17 @@ class SmsEzraLog {
 
     }
 
-    public function updateSmsStats() {
-        
+    public function logCarrierInfo() {
+        try {
+            $this->q = $this->c->dsql(); //new Query();                
+            $this->q->table('sms_stats')
+                ->where('carrier',$this->carrier)
+                ->set('total',$this->q->Expr('total+1'))
+                ->update();
+            $this->loggedCarrierOk = true;
+        } catch (Exception $e) {
+            print $e->getMessage();
+            var_dump($e);
+        }
     }
 }
