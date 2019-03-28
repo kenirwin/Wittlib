@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Jchook\AssertThrows\AssertThrows;
 use \atk4\dsql\Query;
 use Wittlib\SmsEzraLog;
+use Wittlib\TwilioFunctions;
 
 define ('DSN','sqlite::memory:');
 define ('USER',null);
@@ -83,6 +84,13 @@ class SmsEzraLogTest extends TestCase {
         $this->assertTrue($this->db->loggedReqOk);
     }
 
+    public function testWritesEncryptedNumberToLog() {
+        $this->db->setParams($this->good_params);
+        $this->db->carrier = 'Bogus Carrier';
+        $this->db->logUserInfo();
+        $this->assertTrue($this->db->loggedUserOk);
+    }
+
     /* utility functions */
 
     public function tearDown() {
@@ -96,7 +104,7 @@ class SmsEzraLogTest extends TestCase {
 
 
     public function createTables() {
-        $db_new_structure = "
+        $sms_reqs_structure = "
 CREATE TABLE `sms_reqs` (
   `title` varchar(255) DEFAULT NULL,
   `call` varchar(255) DEFAULT NULL,
@@ -104,8 +112,30 @@ CREATE TABLE `sms_reqs` (
   `avail` varchar(255) DEFAULT NULL,
   `timestamp` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
 )";
-        
-        $this->executeQuery($db_new_structure);
+
+        $sms_users_structure = "
+CREATE TABLE IF NOT EXISTS `sms_users` (
+  `id` int(11) NOT NULL,
+  `crypt` varchar(255) NOT NULL DEFAULT '',
+  `n` int(11) NOT NULL DEFAULT '0',
+  `most_recent` date NOT NULL DEFAULT '0000-00-00',
+  `carrier` varchar(255) NOT NULL,
+  `carrier_updated` date NOT NULL,
+  PRIMARY KEY (`id`)
+)";
+
+        /*
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `crypt` varchar(255) NOT NULL DEFAULT '',
+  `n` int(11) NOT NULL DEFAULT '0',
+  `most_recent` date NOT NULL DEFAULT '0000-00-00',
+  `carrier` varchar(255) NOT NULL,
+  `carrier_updated` date NOT NULL,
+  PRIMARY KEY (`id`)
+        */
+
+        $this->executeQuery($sms_reqs_structure);
+        $this->executeQuery($sms_users_structure);
     }
 
     public function executeQuery($query) {

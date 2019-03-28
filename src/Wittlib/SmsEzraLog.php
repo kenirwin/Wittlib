@@ -3,6 +3,7 @@
 namespace Wittlib;
 
 use \atk4\dsql\Query;
+use Twilio\Rest\Client;
 
 class SmsEzraLog {
     public function __construct () {
@@ -11,6 +12,7 @@ class SmsEzraLog {
         $this->paramsOk = false;
         $this->timestamp = date ('Y-m-d H:i:s');
         $this->smsBody = '';
+        $this->carrier = 'unknown';
     }
 
     public function setParams($request) {
@@ -85,8 +87,37 @@ class SmsEzraLog {
         }
     }
     
+    public function logUserInfo() {
+        $crypt = crypt($this->number,'sms');
+        $date = date ('Y-m-d');
+        try {
+            $this->q = $this->c->dsql(); //new Query();
+            $this->q->table('sms_users')
+                ->where('crypt',$crypt);
+            $existing_user = ($this->q->get());
+            if (sizeof($existing_user) > 0) {
+                //update
+            }
+            else {
+            $this->q = $this->c->dsql(); //new Query();                
+            $this->q->table('sms_users')
+                ->set('id',null)
+                ->set('crypt',$crypt)
+                ->set('n',1)
+                ->set('most_recent',$date)
+                ->set('carrier',$this->carrier)
+                ->set('carrier_updated',$date)
+                ->get();
+            $this->loggedUserOk = true;
+            }
+        } catch (Exception $e) {
+            $this->loggedUserOk = false;
+            var_dump($e);
+        }
+
+    }
+
     public function updateSmsStats() {
         
     }
-
 }
