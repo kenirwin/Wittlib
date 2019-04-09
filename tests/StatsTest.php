@@ -24,8 +24,14 @@ class StatsTest extends TestCase {
         $this->assertEquals(0, $this->stats->data[0]);
         //        $this->assertIsInt($this->stats->data[3]);
     }
-    /*
     public function testSomeOtherThing() {
+        $this->assertEquals(54, $this->stats->sum());
+        $this->assertEquals(6, $this->stats->mean());
+        $this->assertEquals(0, $this->stats->min());
+        $this->assertEquals(21, $this->stats->max());
+        
+       /* $this->stats->mean($data);
+        $this->stats->max($data);
+        $this->stats->min($data);*/
     }
-    */
 }
