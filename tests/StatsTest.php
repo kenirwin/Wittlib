@@ -19,19 +19,24 @@ class StatsTest extends TestCase {
         //$this->assertEquals($expected_value, $actual_value);
         //$this is the StatsTest object
 
-        //        $this->assertEquals('array',get_class($this->stats->data)); 
         $this->assertEquals(9, sizeof($this->stats->data)); 
         $this->assertEquals(0, $this->stats->data[0]);
-        //        $this->assertIsInt($this->stats->data[3]);
     }
-    public function testSomeOtherThing() {
+    public function testSum() {
         $this->assertEquals(54, $this->stats->sum());
-        $this->assertEquals(6, $this->stats->mean());
-        $this->assertEquals(0, $this->stats->min());
-        $this->assertEquals(21, $this->stats->max());
-        
-       /* $this->stats->mean($data);
-        $this->stats->max($data);
-        $this->stats->min($data);*/
     }
+    
+    public function testMean() {
+        $this->assertEquals(6, $this->stats->mean());
+    }
+    
+    public function testMin() {
+        $this->assertEquals(0, $this->stats->min());
+    }
+    
+    public function testMax() {
+        $this->assertEquals(21, $this->stats->max());
+    }
+    
+    
 }
