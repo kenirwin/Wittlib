@@ -21,33 +21,42 @@ class DbAssoc {
         return $subjectsList;
     }
         
-    public function listAllDBS($subj_code){        
-        $query = $this->c->dsql();
-        $query-> table("db_new")
-        -> join("db_assoc", "db_new.ID", "inner")
-        -> join("subjects.subj_code" ,"db_assoc.subj_code", "inner")
-        -> where( 
-            $query->andExpr()
-            -> where("db_list", "Y")
-            //-> where("cancelled", "NULL") 
-            -> where("subjects.subj_code", $subj_code)
-            )
-        -> field('title, primacy')
-        -> order("title");        
+    public function listDBAssoc($subj_code, $primacy=false){     
+        $query = $this->c->dsql();       
+        if ($primacy == false){    
+            $query-> table("db_assoc")
+            -> where("subj_code", $subj_code)
+            -> where("primacy", "N")
+            -> field('id')
+            -> order("id"); 
+        } else {
+            $query-> table("db_assoc")
+            -> where("subj_code", $subj_code)
+            -> where("primacy", "Y")            
+            -> field('id, primacy')
+            -> order("id");
+        }
         print($query->render());
         $this->sqlquery = $query->render();
         $subjectsList = $query->get(); //get results
         return $subjectsList;
     }
     
-    public function listAllSj($db_id){
+    public function listSubjAssoc($db_id, $primacy=false){
         $q = $this->c->dsql();
-        $q-> table("db_new")
-        -> join("db_assoc", "db_new.ID", "inner")
-        -> join("subjects.subj_code" ,"db_assoc.subj_code", "inner")
-            -> where("db_assoc.ID", $db_id)
-            -> field('subject, primacy')
-            -> order("subject");
+        if ($primacy == false){
+            $q-> table("db_assoc")
+            -> where("id", $db_id)
+            -> where("primacy", "N")
+            -> field('subj_code')
+            -> order("subj_code");
+        } else {
+            $q-> table("db_assoc")
+            -> where("id", $db_id)
+            -> where("primacy", "Y")
+            -> field('subj_code, primacy')
+            -> order("subj_code");
+        }
         
         print($q->render());
         $this->sqlquery = $q->render();
@@ -55,7 +64,7 @@ class DbAssoc {
         return $subjectsList;
     }
     
-    
+    //return all databases
     public function listDatabases(){
         $query = $this->c->dsql();
         //SELECT * FROM db_new WHERE NOT suppress = 'Y' AND cancelled IS NULL
@@ -68,6 +77,34 @@ class DbAssoc {
         $databaseList = $query->get(); //get results
         return $databaseList;
     }   
+    
+    public function learnAssocSb($subj_code, $primacyStatus = false){
+        if ($primacyStatus == false){
+            $AssocSbRes = $this->listDBAssoc($subj_code, $primacy=false);
+        } elseif ($primacyStatus == true) {
+            $AssocSbRes = $this->listDBAssoc($subj_code, $primacy=true);
+        }
+        
+        $returnList = [];
+        foreach ($AssocSbRes as $result){
+            array_push($returnList, $result['id']);
+        }
+        return $returnList;
+    }
+    
+    public function learnAssocDb($db_id, $primacyStatus = false){
+        if ($primacyStatus == false){
+            $AssoDbRes = $this->listDBAssoc($db_id, $primacy=false);
+        } elseif ($primacyStatus == true) {
+            $AssocDbRes = $this->listDBAssoc($db_id, $primacy=true);
+        }
+        
+        $returnList = [];
+        foreach ($AssocDbRes as $result){
+            array_push($returnList, $result['subj_code']);
+        }
+        return $returnList;
+    }
         
     public function printList($array, $listType){
         if ($listType == "subject") {
@@ -90,33 +127,9 @@ class DbAssoc {
         print '</ul>'.PHP_EOL;        
     }
     
-    //generic build Table from array functions
-    function buildTable($array){
-        // start table
-        $html = '<table>';
-        // header row
-        $html .= '<tr>';
-        foreach($array[0] as $key=>$value){
-            $html .= '<th>' . htmlspecialchars($key) . '</th>';
-        }
-        $html .= '</tr>';
-        
-        // data rows
-        foreach( $array as $key=>$value){
-            $html .= '<tr>';
-            foreach($value as $key2=>$value2){
-                $html .= '<td>' . htmlspecialchars($value2) . '</td>';
-            }
-            $html .= '</tr>';
-        }
-        
-        // finish table and return it
-        
-        $html .= '</table>';
-        return $html;
-    } 
     
     public function printDatabase($array){
+     
      $lines = ''; //define an empty list of HTML table lines
      foreach ($array as $row) {
      $lines .= '<tr>
@@ -168,7 +181,32 @@ class DbAssoc {
          print '</table>'.PHP_EOL;
      }
      
-    
+     //generic build Table from array functions
+     function buildTable($array){
+         // start table
+         $html = '<table>';
+         // header row
+         $html .= '<tr>';
+         foreach($array[0] as $key=>$value){
+             $html .= '<th>' . htmlspecialchars($key) . '</th>';
+         }
+         $html .= '</tr>';
+         
+         // data rows
+         foreach( $array as $key=>$value){
+             $html .= '<tr>';
+             foreach($value as $key2=>$value2){
+                 $html .= '<td>' . htmlspecialchars($value2) . '</td>';
+             }
+             $html .= '</tr>';
+         }
+         
+         // finish table and return it
+         
+         $html .= '</table>';
+         return $html;
+     }
+     
     
 }
 
