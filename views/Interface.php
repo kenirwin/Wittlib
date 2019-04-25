@@ -17,6 +17,8 @@ try {
    
     if (isset($_REQUEST['submit_form'])) {
         //handle submission
+        print 'You did it! You clicked a button.';
+        print_r($_REQUEST);
     }
     
     elseif (isset($_REQUEST['subj_code'])) {
@@ -25,15 +27,14 @@ try {
         $allDb = $db->listDatabases();
         
         $assoc = $db->learnAssocSb($sucodeReq, false);
-        print_r($assoc);
         $primacy = $db->learnAssocSb($sucodeReq, true); //true == only get primacy
         
-        print '<table>'.PHP_EOL;
+        print '<form><table>'.PHP_EOL;
         print '<thead><tr>
-     <td><strong>Include<strong></td>
-     <td><strong>Primary<strong></td>
-     <td><strong>Title<strong></td>
-     </tr></thead>'.PHP_EOL;
+        <td><strong>Include<strong></td>
+        <td><strong>Primary<strong></td>
+        <td><strong>Title<strong></td>
+        </tr></thead>'.PHP_EOL;
         // and print the contents inside
         print '<tbody>'.PHP_EOL;
         $lines = ''; //define an empty list of HTML table lines
@@ -62,6 +63,9 @@ try {
         
         // and close the table
         print '</table>'.PHP_EOL;
+        print '<input type="hidden" name="subj_code" value='.$sucodeReq.' />'.PHP_EOL;
+        print '<input type="submit" name="submit_form" value="Submit Form" />'.PHP_EOL;
+        print '</form>'.PHP_EOL;
     }
     
     elseif (isset($_REQUEST['db_id'])) {
@@ -73,7 +77,7 @@ try {
         print_r($assoc);
         $primacy = $db->listSubjAssoc($idInput, true); //true == only get primacy
         
-        print '<table>'.PHP_EOL;
+        print '<form><table>'.PHP_EOL;
         print '<thead><tr>
      <td><strong>Include<strong></td>
      <td><strong>Primary<strong></td>
@@ -107,6 +111,8 @@ try {
         
         // and close the table
         print '</table>'.PHP_EOL;
+        print '<input type="submit" name="submit_form" value="Submit Form" />'.PHP_EOL;
+        print '</form>'.PHP_EOL;
     }
     
     else {
