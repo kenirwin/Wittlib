@@ -156,6 +156,20 @@ class DbAssoc {
         }
     }
     
+    public function checkPrimIncSB($formSubmit){
+        $this->deleteExistingSB($formSubmit['subj_code']);
+        if (array_key_exists('primary', $formSubmit)){
+            $this->updateSBPrim($formSubmit['subj_code'], $formSubmit['primary']);
+        }
+        
+        if (array_key_exists('include', $formSubmit)) {
+            $this->updateSBIncl($formSubmit['subj_code'], $formSubmit['include']);
+        }
+        echo("<em><b>Database association updated successfully<b><em>");
+        echo("<br><br>");
+        $this->printDBfromSB($formSubmit['subj_code']);    
+    }
+    
     
     public function deleteExistingDB($newID){
         $deleteQuery = $this->c->dsql();
@@ -189,6 +203,110 @@ class DbAssoc {
             $query->render();
         }
     }
+    
+    public function checkPrimIncDB($formSubmit){
+        $this->deleteExistingDB($formSubmit['db_id']);
+        if (array_key_exists('primary', $formSubmit)){
+            $this->updateDBPrim($formSubmit['db_id'], $formSubmit['primary']);
+        }
+        
+        if (array_key_exists('include', $formSubmit)) {
+            $this->updateDBIncl($formSubmit['db_id'], $formSubmit['include']);
+        }
+        echo("<em><b>Database association updated successfully<b><em>");
+        echo("<br><br>");
+        $this->printSBfromDB($formSubmit['db_id']);
+    }
+    
+    public function printSBfromDB($idInput){
+        $allSb = $this->listSubjects();
+        $assocSB = $this->learnAssocDb($idInput, false);
+        $primacySB = $this->learnAssocDb($idInput, true); //true == only get primacy
+        
+        print '<form><table>'.PHP_EOL;
+        print '<thead><tr>
+     <td><strong>Include<strong></td>
+     <td><strong>Primary<strong></td>
+     <td><strong>Title<strong></td>
+     </tr></thead>'.PHP_EOL;
+        // and print the contents inside
+        print '<tbody>'.PHP_EOL;
+        $lines = ''; //define an empty list of HTML table lines
+        
+        foreach ($allSb as $rows) {
+            $incSBcheck = '';
+            $priSBcheck = '';
+            
+            if (in_array($rows["subj_code"], $assocSB))  {
+                $incSBcheck = "checked";
+            }
+            
+            if (in_array($rows["subj_code"], $primacySB)) {
+                $priSBcheck = "checked";
+            }
+            
+            $lines .= '<tr>
+            <td><input type = "checkbox" name = "include[]" value='.$rows["subj_code"].' '.$incSBcheck.'></td>
+            <td><input type = "checkbox" name = "primary[]" value='.$rows["subj_code"].' '.$priSBcheck.' ></td>
+            <td>'.$rows['subject'].'</td>
+            </tr>'.PHP_EOL;
+        }
+        
+        print $lines;
+        print '</tbody>'.PHP_EOL;
+        
+        // and close the table
+        print '</table>'.PHP_EOL;
+        print '<input type="hidden" name="db_id" value='.$idInput.' />'.PHP_EOL;
+        print '<input type="submit" name="submit_form" value="Submit Form" />'.PHP_EOL;
+        print '</form>'.PHP_EOL;
+    }
+    
+    function printDBfromSB($sucodeInput){
+        $allDb = $this->listDatabases();
+        $assocDB = $this->learnAssocSb($sucodeInput, false);
+        $priDB = $this->learnAssocSb($sucodeInput, true); //true == only get primacy
+        
+        print '<form><table>'.PHP_EOL;
+        print '<thead><tr>
+        <td><strong>Include<strong></td>
+        <td><strong>Primary<strong></td>
+        <td><strong>Title<strong></td>
+        </tr></thead>'.PHP_EOL;
+        // and print the contents inside
+        print '<tbody>'.PHP_EOL;
+        $lines = ''; //define an empty list of HTML table lines
+        
+        foreach ($allDb as $row) {
+            $incDBcheck = '';
+            $priDBcheck = '';
+            
+            if (in_array($row["ID"], $assocDB))  {
+                $incDBcheck = "checked";
+            }
+            
+            if (in_array($row["ID"], $priDB)) {
+                $priDBcheck = "checked";
+            }
+            
+            $lines .= '<tr>
+            <td><input type = "checkbox" name = "include[]" value='.$row["ID"].' '.$incDBcheck.'></td>
+            <td><input type = "checkbox" name = "primary[]" value='.$row["ID"].' '.$priDBcheck.' ></td>
+            <td>'.$row['title'].'</td>
+            </tr>'.PHP_EOL;
+        }
+        
+        print $lines;
+        print '</tbody>'.PHP_EOL;
+        
+        // and close the table
+        print '</table>'.PHP_EOL;
+        print '<input type="hidden" name="subj_code" value='.$sucodeInput.' />'.PHP_EOL;
+        print '<input type="submit" name="submit_form" value="Submit Form" />'.PHP_EOL;
+        print '</form>'.PHP_EOL;
+    }
+    
+    
      
      //generic build Table from array functions
      function buildTable($array){
