@@ -13,21 +13,37 @@ getConfig();
 use Wittlib\DbAssoc;
 
 $db = new DbAssoc;
+
+
 try {
-   
+    
     if (isset($_REQUEST['submit_form'])) {
-        //handle submission
         print 'You did it! You clicked a button.';
-        print_r($_REQUEST);
+        $formSubmit = $_REQUEST;
+        print(" ");
+        print_r($formSubmit);
+                
+        //handle submission
+        if (array_key_exists('subj_code', $formSubmit)){
+                
+        } elseif (array_key_exists('db_id', $formSubmit)){
+            if (array_key_exists('primary', $formSubmit)){
+                $db->updateDBPrim($formSubmit['db_id'], $formSubmit['primary']);
+            } 
+            
+            if (array_key_exists('include', $formSubmit)) {
+                $db->updateDBPrim($formSubmit['db_id'], $formSubmit['include']);
+                }
+            }
     }
     
     elseif (isset($_REQUEST['subj_code'])) {
         // list database settings for that subject code
-        $sucodeReq = $_REQUEST['subj_code'];
+        $sucodeInput = $_REQUEST['subj_code'];
         $allDb = $db->listDatabases();
         
-        $assoc = $db->learnAssocSb($sucodeReq, false);
-        $primacy = $db->learnAssocSb($sucodeReq, true); //true == only get primacy
+        $assocDB = $db->learnAssocSb($sucodeInput, false);
+        $priDB = $db->learnAssocSb($sucodeInput, true); //true == only get primacy
         
         print '<form><table>'.PHP_EOL;
         print '<thead><tr>
@@ -40,20 +56,20 @@ try {
         $lines = ''; //define an empty list of HTML table lines
               
         foreach ($allDb as $row) {
-            $includecheckmark = '';
-            $primarycheckmark = '';
+            $incDBcheck = '';
+            $priDBcheck = '';
             
-            if (in_array($row["ID"], $assoc))  {
-                $includecheckmark = "checked";
+            if (in_array($row["ID"], $assocDB))  {
+                $incDBcheck = "checked";
             } 
             
-            if (in_array($row["ID"], $primacy)) {
-                $primarycheckmark = "checked";
+            if (in_array($row["ID"], $priDB)) {
+                $priDBcheck = "checked";
             }
             
             $lines .= '<tr>
-            <td><input type = "checkbox" name = "include[]" value='.$row["ID"].' '.$includecheckmark.'></td>
-            <td><input type = "checkbox" name = "primary[]" value='.$row["ID"].' '.$primarycheckmark.' ></td>
+            <td><input type = "checkbox" name = "include[]" value='.$row["ID"].' '.$incDBcheck.'></td>
+            <td><input type = "checkbox" name = "primary[]" value='.$row["ID"].' '.$priDBcheck.' ></td>
             <td>'.$row['title'].'</td>
             </tr>'.PHP_EOL;    
         }
@@ -63,7 +79,7 @@ try {
         
         // and close the table
         print '</table>'.PHP_EOL;
-        print '<input type="hidden" name="subj_code" value='.$sucodeReq.' />'.PHP_EOL;
+        print '<input type="hidden" name="subj_code" value='.$sucodeInput.' />'.PHP_EOL;
         print '<input type="submit" name="submit_form" value="Submit Form" />'.PHP_EOL;
         print '</form>'.PHP_EOL;
     }
@@ -73,9 +89,8 @@ try {
         $idInput = $_REQUEST['db_id'];
         $allSb = $db->listSubjects();
         
-        $assoc = $db->listSubjAssoc($idInput, false);
-        print_r($assoc);
-        $primacy = $db->listSubjAssoc($idInput, true); //true == only get primacy
+        $assocSB = $db->learnAssocDb($idInput, false);
+        $primacySB = $db->learnAssocDb($idInput, true); //true == only get primacy
         
         print '<form><table>'.PHP_EOL;
         print '<thead><tr>
@@ -87,22 +102,22 @@ try {
         print '<tbody>'.PHP_EOL;
         $lines = ''; //define an empty list of HTML table lines
         
-        foreach ($allSb as $row) {
-            $includecheckmark = '';
-            $primarycheckmark = '';
+        foreach ($allSb as $rows) {
+            $incSBcheck = '';
+            $priSBcheck = '';
             
-            if (in_array($row["subj_code"], $assoc))  {
-                $includecheckmark = "checked";
+            if (in_array($rows["subj_code"], $assocSB))  {
+                $incSBcheck = "checked";
             }
             
-            if (in_array($row["subj_code"], $primacy)) {
-                $primarycheckmark = "checked";
+            if (in_array($rows["subj_code"], $primacySB)) {
+                $priSBcheck = "checked";
             }
             
             $lines .= '<tr>
-            <td><input type = "checkbox" name = "include[]" value='.$row["subj_code"].' '.$includecheckmark.'></td>
-            <td><input type = "checkbox" name = "primary[]" value='.$row["subj_code"].' '.$primarycheckmark.' ></td>
-            <td>'.$row['subject'].'</td>
+            <td><input type = "checkbox" name = "include[]" value='.$rows["subj_code"].' '.$incSBcheck.'></td>
+            <td><input type = "checkbox" name = "primary[]" value='.$rows["subj_code"].' '.$priSBcheck.' ></td>
+            <td>'.$rows['subject'].'</td>
             </tr>'.PHP_EOL;
         }
         
@@ -111,6 +126,7 @@ try {
         
         // and close the table
         print '</table>'.PHP_EOL;
+        print '<input type="hidden" name="db_id" value='.$idInput.' />'.PHP_EOL;
         print '<input type="submit" name="submit_form" value="Submit Form" />'.PHP_EOL;
         print '</form>'.PHP_EOL;
     }
