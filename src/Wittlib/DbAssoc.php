@@ -77,7 +77,7 @@ class DbAssoc {
         $databaseList = $query->get(); //get results
         return $databaseList;
     }   
-    
+        
     public function learnAssocSb($subj_code, $primacyStatus = false){
         if ($primacyStatus == false){
             $AssocSbRes = $this->listDBAssoc($subj_code, $primacy=false);
@@ -85,25 +85,25 @@ class DbAssoc {
             $AssocSbRes = $this->listDBAssoc($subj_code, $primacy=true);
         }
         
-        $returnList = [];
+        $SBAssoc = [];
         foreach ($AssocSbRes as $result){
-            array_push($returnList, $result['id']);
+            array_push($SBAssoc, $result['id']);
         }
-        return $returnList;
+        return $SBAssoc;
     }
     
     public function learnAssocDb($db_id, $primacyStatus = false){
         if ($primacyStatus == false){
-            $AssoDbRes = $this->listDBAssoc($db_id, $primacy=false);
+            $AssocDbRes = $this->listSubjAssoc($db_id, $primacy=false);
         } elseif ($primacyStatus == true) {
-            $AssocDbRes = $this->listDBAssoc($db_id, $primacy=true);
+            $AssocDbRes = $this->listSubjAssoc($db_id, $primacy=true);
         }
         
-        $returnList = [];
-        foreach ($AssocDbRes as $result){
-            array_push($returnList, $result['subj_code']);
+        $DBAssoc = [];
+        foreach ($AssocDbRes as $results){
+            array_push($DBAssoc, $results['subj_code']);
         }
-        return $returnList;
+        return $DBAssoc;
     }
         
     public function printList($array, $listType){
@@ -125,6 +125,48 @@ class DbAssoc {
         print '<ul>'.PHP_EOL;
         print $lines;
         print '</ul>'.PHP_EOL;        
+    }
+    
+    public function updateDBPrim($newID, $array){
+        $deleteQuery = $this->c->dsql();
+        
+        $deleteQuery->table('db_assoc')
+        ->where('id', $newID)
+        ->delete();
+        print($deleteQuery->render());
+        //$this->$deleteQuery = $deleteQuery->render();
+        
+        foreach ($array as $primArray){
+            $query = $this->c->dsql();
+            $query->table('db_assoc')
+                ->set('id', $newID)
+                ->set('subj_code', $primArray)
+                ->set('primacy', 'Y')             
+                ->insert();
+           print($query->render());
+           //$this->$query = $query->render();
+        }
+    }
+    
+    public function updateDBIncl($newID, $array){
+        $deleteQuery = $this->c->dsql();
+        
+        $deleteQuery->table('db_assoc')
+        ->where('id', $newID)
+        ->delete();
+        print($deleteQuery->render());
+        //$this->$deleteQuery = $deleteQuery->render();
+        
+        foreach ($array as $incArray){
+            $query = $this->c->dsql();
+            $query->table('db_assoc')
+            ->set('id', $newID)
+            ->set('subj_code', $incArray)
+            ->set('primacy', 'N')
+            ->insert();
+            print($query->render());
+            //$this->$query = $query->render();
+        }
     }
     
     
