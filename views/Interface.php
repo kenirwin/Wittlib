@@ -18,23 +18,29 @@ $db = new DbAssoc;
 try {
     
     if (isset($_REQUEST['submit_form'])) {
-        print 'You did it! You clicked a button.';
         $formSubmit = $_REQUEST;
-        print(" ");
-        print_r($formSubmit);
-                
+        
         //handle submission
         if (array_key_exists('subj_code', $formSubmit)){
-                
+            $db->deleteExistingSB($formSubmit['subj_code']);
+            if (array_key_exists('primary', $formSubmit)){
+                $db->updateSBPrim($formSubmit['subj_code'], $formSubmit['primary']);
+                }
+            
+            if (array_key_exists('include', $formSubmit)) {
+                $db->updateSBIncl($formSubmit['subj_code'], $formSubmit['include']);
+                }
         } elseif (array_key_exists('db_id', $formSubmit)){
+            $db->deleteExistingDB($formSubmit['db_id']);
             if (array_key_exists('primary', $formSubmit)){
                 $db->updateDBPrim($formSubmit['db_id'], $formSubmit['primary']);
             } 
             
             if (array_key_exists('include', $formSubmit)) {
-                $db->updateDBPrim($formSubmit['db_id'], $formSubmit['include']);
+                $db->updateDBIncl($formSubmit['db_id'], $formSubmit['include']);
                 }
             }
+        print("Updated");
     }
     
     elseif (isset($_REQUEST['subj_code'])) {
@@ -135,10 +141,12 @@ try {
         if (isset($_REQUEST['list']) && ($_REQUEST['list'] == 'subject')) {
             // list subject links
             $subjects = $db->listSubjects();
+            echo '<a href="'.$_SERVER['SCRIPT_NAME'].'">Switch to Database view</a>';
             $db->printList($subjects, "subject");
         } else {
             // list database links
             $databases = $db->listDatabases();
+            echo '<a href="'.$_SERVER['SCRIPT_NAME'].'?list=subject">Switch to Subject view</a>';
             $db->printList($databases, "database");
    
         }

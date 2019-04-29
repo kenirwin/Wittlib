@@ -15,7 +15,6 @@ class DbAssoc {
         -> field('subject, subj_code')
         -> where("db_list", "not", "N")
         -> order("subject");
-        print($query->render());
         $this->sqlquery = $query->render();
         $subjectsList = $query->get(); //get results
         return $subjectsList;
@@ -36,7 +35,6 @@ class DbAssoc {
             -> field('id, primacy')
             -> order("id");
         }
-        print($query->render());
         $this->sqlquery = $query->render();
         $subjectsList = $query->get(); //get results
         return $subjectsList;
@@ -58,7 +56,6 @@ class DbAssoc {
             -> order("subj_code");
         }
         
-        print($q->render());
         $this->sqlquery = $q->render();
         $subjectsList = $q->get(); //get results
         return $subjectsList;
@@ -72,7 +69,6 @@ class DbAssoc {
         -> where([["cancelled" , "=", "NULL"], ["suppress", "not", "Y"]])
         -> field('title, ID')
         -> order("title");  
-        print($query->render());
         $this->sqlquery1 = $query->render();
         $databaseList = $query->get(); //get results
         return $databaseList;
@@ -127,15 +123,50 @@ class DbAssoc {
         print '</ul>'.PHP_EOL;        
     }
     
-    public function updateDBPrim($newID, $array){
+    public function deleteExistingSB($subj_code){
+        $deleteQuery = $this->c->dsql();
+        
+        $deleteQuery->table('db_assoc')
+        ->where('subj_code', $subj_code)
+        ->delete();
+        $deleteQuery->render();
+    }
+    
+    public function updateSBPrim($subj_code, $array){
+        foreach ($array as $primArray){
+            $query = $this->c->dsql();
+            $query->table('db_assoc')
+            ->set('subj_code', $subj_code)
+            ->set('id', $primArray)
+            ->set('primacy', 'Y')
+            ->insert();
+            $query->render();
+        }
+    }
+    
+    public function updateSBIncl($subj_code, $array){
+        foreach ($array as $incArray){
+            $query = $this->c->dsql();
+            $query->table('db_assoc')
+            ->set('subj_code', $subj_code)
+            ->set('id', $incArray)
+            ->set('primacy', 'N')
+            ->insert();
+            $query->render();
+        }
+    }
+    
+    
+    public function deleteExistingDB($newID){
         $deleteQuery = $this->c->dsql();
         
         $deleteQuery->table('db_assoc')
         ->where('id', $newID)
         ->delete();
-        print($deleteQuery->render());
-        //$this->$deleteQuery = $deleteQuery->render();
-        
+        $deleteQuery->render();
+    }
+    
+    public function updateDBPrim($newID, $array){        
         foreach ($array as $primArray){
             $query = $this->c->dsql();
             $query->table('db_assoc')
@@ -143,20 +174,11 @@ class DbAssoc {
                 ->set('subj_code', $primArray)
                 ->set('primacy', 'Y')             
                 ->insert();
-           print($query->render());
-           //$this->$query = $query->render();
+           $query->render();
         }
     }
     
-    public function updateDBIncl($newID, $array){
-        $deleteQuery = $this->c->dsql();
-        
-        $deleteQuery->table('db_assoc')
-        ->where('id', $newID)
-        ->delete();
-        print($deleteQuery->render());
-        //$this->$deleteQuery = $deleteQuery->render();
-        
+    public function updateDBIncl($newID, $array){        
         foreach ($array as $incArray){
             $query = $this->c->dsql();
             $query->table('db_assoc')
@@ -164,64 +186,9 @@ class DbAssoc {
             ->set('subj_code', $incArray)
             ->set('primacy', 'N')
             ->insert();
-            print($query->render());
-            //$this->$query = $query->render();
+            $query->render();
         }
     }
-    
-    
-    public function printDatabase($array){
-     
-     $lines = ''; //define an empty list of HTML table lines
-     foreach ($array as $row) {
-     $lines .= '<tr>
-     <td><input type = "checkbox" name = "include[]"></td>
-     <td><input type = "checkbox" name = "primary[]"></td>
-     <td>'.$row['title'].'</td>
-     </tr>'.PHP_EOL;
-     }
-     
-     // now that the content is compiled, create a table and header
-     print '<table>'.PHP_EOL;
-     print '<thead><tr>
-     <td><strong>Include<strong></td>
-     <td><strong>Primary<strong></td>
-     <td><strong>Title<strong></td>
-     </tr></thead>'.PHP_EOL;
-     // and print the contents inside
-     print '<tbody>'.PHP_EOL;
-     print $lines;
-     print '</tbody>'.PHP_EOL;
-     
-     // and close the table
-     print '</table>'.PHP_EOL;
-     }
-     
-     public function printSubject($array){
-         $lines = ''; //define an empty list of HTML table lines
-         foreach ($array as $row) {
-             $lines .= '<tr>
-     <td><input type = "checkbox" name = "include[]"></td>
-     <td><input type = "checkbox" name = "primary[]"></td>
-     <td>'.$row['subject'].'</td>
-     </tr>'.PHP_EOL;
-         }
-         
-         // now that the content is compiled, create a table and header
-         print '<table>'.PHP_EOL;
-         print '<thead><tr>
-     <td><strong>Include<strong></td>
-     <td><strong>Primary<strong></td>
-     <td><strong>Subject<strong></td>
-     </tr></thead>'.PHP_EOL;
-         // and print the contents inside
-         print '<tbody>'.PHP_EOL;
-         print $lines;
-         print '</tbody>'.PHP_EOL;
-         
-         // and close the table
-         print '</table>'.PHP_EOL;
-     }
      
      //generic build Table from array functions
      function buildTable($array){
