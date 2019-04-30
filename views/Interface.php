@@ -32,13 +32,13 @@ try {
     
     elseif (isset($_REQUEST['subj_code'])) {
         // list database assocation/checkmark for that subject code
-        $sucodeInput = $_REQUEST['subj_code'];
+        $sucodeInput = $_REQUEST['subj_code'];        
         $db->printDBfromSB($sucodeInput);
     }
     
     elseif (isset($_REQUEST['db_id'])) {
         // list subjects assocation/checkmark for that database id
-        $idInput = $_REQUEST['db_id'];
+        $idInput = $_REQUEST['db_id'];        
         $db->printSBfromDB($idInput);
    
          } else {
