@@ -205,11 +205,7 @@ class DbAssoc {
         }
         
         //update successfully message
-        echo("<em><b>Database association updated successfully<b><em>");
-        echo("<br><br>");
-        
-        //print table again to verify
-        $this->printDBfromSB($formSubmit['subj_code']);    
+        $this->message = 'Subjects association updated successfully';
     }
     
     
@@ -262,11 +258,8 @@ class DbAssoc {
         }
         
         //update successfully message
-        echo("<em><b>Database association updated successfully<b><em>");
-        echo("<br><br>");
+        $this->message = 'Database association updated successfully';
         
-        //print table again to verify
-        $this->printSBfromDB($formSubmit['db_id']);
     }
     
     //get subjects connections from database id
@@ -277,9 +270,11 @@ class DbAssoc {
         $assocSB = $this->learnAssocDb($idInput, false);
         $primacySB = $this->learnAssocDb($idInput, true); //true == only get primacy
         
+        print '<a href="'.$_SERVER['SCRIPT_NAME'].'?list=subject">Switch to Subject view</a>';
+        
         //print Database name on top
-        echo "<b><i>Database Name: <i><b>";
-        print($this->printDBName($idInput)[0]['title']);
+        print "<h2>Database Name: ";
+        print('<i>'.$this->printDBName($idInput)[0]['title'].'</i></h2>');
         
         //print HTML table      
         print '<form><table>'.PHP_EOL;
@@ -334,9 +329,11 @@ class DbAssoc {
         $assocDB = $this->learnAssocSb($sucodeInput, false);
         $priDB = $this->learnAssocSb($sucodeInput, true); //true == only get primacy
         
+        print '<a href="'.$_SERVER['SCRIPT_NAME'].'">Switch to Database view</a>';
+        
         //print Subject Name on top
-        echo "<b><i>Subject Name: <i><b>";
-        print($this->printSBName($sucodeInput)[0]['subject']);
+        print "<h2>Subject Name: ";
+        print('<i>'.$this->printSBName($sucodeInput)[0]['subject'].'</i></h2>');
         
         //print HTML table
         print '<form><table>'.PHP_EOL;
