@@ -1,4 +1,4 @@
-<a href="http://www4.wittenberg.edu/academics/east/Journal/journal.htm"><img src="http://www.wittenberg.edu/sites/default/files/images/easjournal.gif" height=100 border=0 align=right></a>
+<a href="http://ojs.wittenberg.edu/index.php/wueasj"><img src="http://www.wittenberg.edu/sites/default/files/images/easjournal.gif" height=100 border=0 align=right></a>
          <h2>
        Index to <cite>Wittenberg University East Asian Studies Journal</cite>, <?=$start_date?>-<?=$end_date?> </h2>
          
