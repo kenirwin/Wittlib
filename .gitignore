@@ -4,3 +4,4 @@ error_log
 vendor/
 composer.phar
 local_files/
+views/test.php
