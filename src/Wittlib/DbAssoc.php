@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @author  Hai T. Vo
+ */
+
 namespace Wittlib;
 
 use \atk4\dsql\Query;
