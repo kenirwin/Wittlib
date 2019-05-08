@@ -20,7 +20,7 @@ class Honors {
         else {
             $q->order('lastname asc');
         }
-        $this->queryString = $q->render();
+        //        return $this->queryString = $q->render();
         return $q->get();
     }
     
@@ -37,6 +37,24 @@ class Honors {
         } catch (Exception $e) {
             print ($e->getMessage()); 
         }
+    }
+
+    public function getDepts() {
+        $q = $this->c->dsql();
+        $q->table('senior_theses')
+            ->field('dept1,dept2')
+            ->where('univ_honors','Y')
+            ->where('suppress','!=','Y')
+            ->where('perm','!=','none');
+        $results = $q->get();
+        $depts = array();
+        foreach ($results as $row) {
+            extract($row);
+            if (! array_key_exists($dept1, $depts)) { $depts[$dept1] = $dept1; }
+            if (isset($dept2) && ($dept2 != '') && (! array_key_exists($dept2, $depts))) { $depts[$dept2] = $dept2; }
+        }
+        ksort ($depts);
+        return $depts;
     }
 
     public function getFilepath($id=null) {
