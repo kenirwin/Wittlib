@@ -46,6 +46,13 @@ class ImportHonorsTest extends TestCase {
         $this->assertEquals(164, $data[0]['id']); //most recent au 164=Glass
     }
 
+    public function testGetListByYearAndDept() {
+        $getByYear = true;
+        $dept = 'Philosophy';
+        $data = $this->db->getListByAuthor($getByYear,$dept);
+        $this->assertEquals(49, $data[0]['id']); //most philos = 49=Fetherolf
+    }
+
     public function testListsDepts() {
         $data = $this->db->getDepts();
         $expected = ['Communication','History','Philosophy','Religion'];

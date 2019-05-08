@@ -9,7 +9,7 @@ class Honors {
         $this->c = \atk4\dsql\Connection::connect(DSN,USER,PASS);
     }
     
-    public function getListByAuthor($yearsort = false) {
+    public function getListByAuthor($yearsort = false, $dept = null) {
         $q = $this->c->dsql();
         $q->table('senior_theses')
             ->where('suppress','N')
@@ -19,6 +19,13 @@ class Honors {
         }
         else {
             $q->order('lastname asc');
+        }
+        // limit by dept if called for
+        if ($dept != null) {
+            $q->where([
+                ['dept1',$dept],
+                ['dept2',$dept]
+            ]);
         }
         //        return $this->queryString = $q->render();
         return $q->get();
