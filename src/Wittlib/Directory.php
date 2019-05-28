@@ -8,8 +8,11 @@ class Directory {
     public function __construct() {
         $this->initializeQuery();
     }
-    public function displayList($format = 'name') {
-
+    public function getNames() {
+        $query = $this->c->dsql();
+        $query->table('directory')
+            ->order(['last_name','first_name']);
+        return($query->get());
     }
     public function getPerson($id) {
         $query = $this->c->dsql();

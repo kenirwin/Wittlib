@@ -19,11 +19,35 @@ if (array_key_exists('id',$_REQUEST)) {
     displayPerson($data);
 }
 
-//$data = $db->listLibrarians();
+else {
+    $data = $db->getNames();
+    listNames($data);
+}
 
+function listNames($data) {
+    $rows = '';
+    foreach ($data as $row) {
+        $rows .= '<tr><td><b>'.$row['last_name'].', '.$row['first_name']. '</b><br />'.$row['title'].'</td>'
+              . '<td>'.formatPhone($row['phone']).'</td>'
+              . '<td>'.formatEmail($row['uniq_id']).'</td>';
+
+    }
+    print '<table>';
+    print '<thead><tr><td>Name</td> <td>Phone</td> <td>Email</td></tr></thead>'.PHP_EOL;
+    print '<tbody>'.PHP_EOL;
+    print $rows;
+    print '</tbody>'.PHP_EOL;
+    print '</table>'.PHP_EOL;
+}
+function formatPhone($number) {
+   $ephone = '+1' . preg_replace('/[^0-9]+/','',$number);
+    return '<a href="tel:'.$ephone.'">'.$number.'</a>';
+}
+function formatEmail($id) {
+    return '<a href="mailto:'.$id.'@wittenberg.edu">'.$id.'@wittenberg.edu</a>';
+}
 function displayPerson($data) {
     //    print_r ($data);
-    $ephone = '+1' . preg_replace('/[^0-9]+/','',$data['phone']);
     $name = $data['first_name'].' '.$data['last_name'];
     $display = '';
     if (file_exists(STAFF_IMG_DIR.$data['photo'])) {
@@ -32,8 +56,8 @@ function displayPerson($data) {
     $display.= '<h3>'.$name.'<br />'.PHP_EOL;
     $display.= $data['title'].'</h3>'.PHP_EOL;
     $display.= '<address>'.PHP_EOL;
-    $display.= 'Phone: <a href="tel:'.$ephone.'">'.$data['phone'].'</a><br />'.PHP_EOL; 
-    $display.= 'Email: <a href="mailto:'.$data['uniq_id'].'@wittenberg.edu">'.$data['uniq_id'].'@wittenberg.edu</a>'.PHP_EOL;
+    $display.= 'Phone: '.formatPhone($data['phone']).'<br />'.PHP_EOL; 
+    $display.= 'Email: '.formatEmail($data['uniq_id']).PHP_EOL;
     $display.= '</address>'.PHP_EOL;
     if (array_key_exists('liaison', $data)) { 
         $display.= '<p><b>Liaison to:</b> '.$data['liaison'].'</p>';
