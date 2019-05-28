@@ -1,19 +1,19 @@
 <?php
+/*
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+*/
 
 require_once '../vendor/autoload.php';
 require_once '../config.php';
 getConfig('witt_pubs');
 use Wittlib\SearchTable;
 
-if (! array_key_exists('index',$_REQUEST)) {
-    print 'ERROR: Index parameter required';
+if (!defined('INDEX')) {
+
 }
 else {
-    define('INDEX',$_REQUEST['index']);
-    
-    switch ($_REQUEST['index']) {
+    switch (INDEX) {
     case 'eas':
         define('TABLE','eas_index');
         define('FORM','search_form_eas.php');
