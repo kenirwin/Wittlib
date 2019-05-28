@@ -11,7 +11,7 @@ $(document).ready(function() {
 </script>
 
 <style>
-dd { text-indent: 2em !important; } 
+dd { margin-left: 2em !important; } 
 </style>
 
 <?php
