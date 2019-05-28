@@ -10,6 +10,10 @@ $(document).ready(function() {
 });
 </script>
 
+<style>
+dd { text-indent: 2em !important; } 
+</style>
+
 <?php
 /*
 error_reporting(E_ALL);
