@@ -11,8 +11,10 @@ $(document).ready(function() {
 </script>
 
 <?php
+/*
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+*/
 
 require_once '../vendor/autoload.php';
 require_once '../config.php';
@@ -152,7 +154,7 @@ function DisplaySortBy() {
         $sort = $_REQUEST['sort'];
         $selected[$sort] = 'selected';
     }
-    $form = '<form method="get" action="honors.php">'.PHP_EOL;
+    $form = '<form method="get" action="">'.PHP_EOL;
     $form.= '<label for="sort">Sort by: </label>'.PHP_EOL;
     $form.= '<select name="sort" id="sort">'.PHP_EOL;
     $form.= '<option value="year" '.$selected['year'].'>Year</option>'.PHP_EOL;
