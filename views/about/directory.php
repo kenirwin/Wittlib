@@ -37,15 +37,22 @@ else {
 }
 
 function listNames($data) {
+    $depts = array ('ref' => 'Reference',
+                    'tech' => 'Technical Services',
+                    'circ' => 'Circulation',
+                    'admin' => 'Administration',
+                    'av' => 'Audio-Visual Services'
+    );
     $rows = '';
     foreach ($data as $row) {
         $rows .= '<tr><td><b>'.$row['last_name'].', '.$row['first_name']. '</b><br />'.$row['title'].'</td>'
+              . '<td>'.$depts[$row['dept']].'</td>'
               . '<td>'.formatPhone($row['phone']).'</td>'
-              . '<td>'.formatEmail($row['uniq_id']).'</td>';
-
+              . '<td>'.formatEmail($row['uniq_id']).'</td>';        
+        
     }
     print '<table id="directory">';
-    print '<thead><tr><td>Name</td> <td>Phone</td> <td>Email</td></tr></thead>'.PHP_EOL;
+    print '<thead><tr><td>Name</td> <td>Department</td> <td>Phone</td> <td>Email</td></tr></thead>'.PHP_EOL;
     print '<tbody>'.PHP_EOL;
     print $rows;
     print '</tbody>'.PHP_EOL;
