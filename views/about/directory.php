@@ -1,17 +1,22 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" />
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
 
 <script>
            $(document).ready(function () {
                $('#directory').DataTable({
-                       paging: false
+                       paging: false,
+                              responsive: true
                    });
            });
 </script>
 
 <style>
 img.portrait { float: left; height: 150px !important; margin-right: 1em;; }
+#directory { width: 100% !important; }
+
 </style>
 
 <?php
