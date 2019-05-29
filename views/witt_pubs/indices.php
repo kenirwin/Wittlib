@@ -1,13 +1,14 @@
 <?php
-/*
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-*/
+
 
 require_once '../../vendor/autoload.php';
 require_once '../../config.php';
 getConfig('witt_pubs');
 use Wittlib\SearchTable;
+use Wittlib\Associate;
 
 if (!defined('INDEX')) {
 
@@ -21,6 +22,12 @@ else {
     case 'pholeos':
         define('TABLE','pholeos');
         define('FORM','search_form_pholeos.php');
+        $assoc = new Associate('pholeos_urls','issue','url');
+        foreach ($assoc->getAssoc() as $i) {
+            $issue = $i['issue'];
+            $url = $i['url'];
+            $urls[$issue] = $url;
+        }
         break;
     case 'writing':
         define('TABLE','student_writing');
@@ -108,7 +115,12 @@ elseif (isset($_REQUEST['search']) || isset($genre)) {
                 }
             }
             else { $pub = ''; }
-            echo "<tr><td>$author</td> <td>$title</td> <td>$genre</td> $pub <td>$volume ($year)</td> <td>$page</td></tr>\n";
+
+            $vol_info = "$volume ($year)";
+            if ((INDEX == 'pholeos') && (array_key_exists($volume,$urls))) {
+                $vol_info = '<a href="'.$urls[$volume].'">'.$vol_info.'</a>';
+            }
+            echo "<tr><td>$author</td> <td>$title</td> <td>$genre</td> $pub <td>$vol_info</td> <td>$page</td></tr>\n";
         }
         echo "</table>\n";
     } // end if countable results
