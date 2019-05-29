@@ -1,3 +1,15 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+
+<script>
+           $(document).ready(function () {
+               $('#directory').DataTable({
+                       paging: false
+                   });
+           });
+</script>
+
 <style>
 img.portrait { float: left; height: 150px !important; margin-right: 1em;; }
 </style>
@@ -32,7 +44,7 @@ function listNames($data) {
               . '<td>'.formatEmail($row['uniq_id']).'</td>';
 
     }
-    print '<table>';
+    print '<table id="directory">';
     print '<thead><tr><td>Name</td> <td>Phone</td> <td>Email</td></tr></thead>'.PHP_EOL;
     print '<tbody>'.PHP_EOL;
     print $rows;
