@@ -41,6 +41,8 @@ else {
     listNames($data);
 }
 
+print ($db->menuHtml());
+
 function listNames($data) {
     $depts = array ('ref' => 'Reference',
                     'tech' => 'Technical Services',

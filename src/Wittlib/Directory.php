@@ -51,4 +51,27 @@ class Directory {
     private function initializeQuery() {
         $this->c = \atk4\dsql\Connection::connect(DSN,USER,PASS);
     }
+
+    public function getImgHtml($data, $opts = []) {
+        if (! array_key_exists('class', $opts)) { $opts['class'] = 'portrait'; }
+        if (array_key_exists('link', $opts) && $opts['link'] == true) {
+            $link = true;
+        } 
+        else { $link = false; }
+
+        if (file_exists(STAFF_IMG_DIR.$data['photo'])) {
+            $img = '<img src="' . STAFF_IMG_DIR_HTTP.$data['photo'] . '" alt="' . $data['first_name'] .' ' .$data['last_name'].'" class="'.$opts['class'].'" />';
+            if ($link && array_key_exists('uniq_id',$data)) {
+                $img = '<a href="./directory?id='.$data['uniq_id'].'">' . $img . '</a>'.PHP_EOL;
+            }
+            return $img;
+        }
+    }
+    public function menuHtml() {
+        $menu = '<h2>Staff Directory Options</h2>'
+              . '<a href="/lib/about/directory">Library Staff List</a><br />'
+              . '<a href="/lib/about/directory/photo">Library Staff Photo Directory</a><br />'
+              . '<a href="/lib/about/directory/librarians">Librarians by Subject Area</a>';
+        return $menu;
+    }
 }

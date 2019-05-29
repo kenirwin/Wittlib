@@ -32,4 +32,5 @@ print '<table>'.PHP_EOL;
 print $rows;
 print '</table>'.PHP_EOL;
 
+print ($db->menuHtml());
 ?>
