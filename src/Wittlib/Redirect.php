@@ -1,11 +1,19 @@
 <?php
 
+/*
+  allowed $conf values:
+  'allowed_domains' = array; // list of domain names allowed for url-based redirect
+  'use_proxy' = bool; //default = true
+  'resolve_now' = bool; //default = true
+*/
+
 namespace Wittlib;
 
 use \atk4\dsql\Query;
 
 class Redirect {
     public function __construct ($id=null, $conf=array()) {
+        if (! $this->validateInputs($id,$conf)) { die(); }
         $this->debugLog = array();
         $this->c = \atk4\dsql\Connection::connect(DSN,USER,PASS);
         $this->resolved = false;
@@ -17,7 +25,7 @@ class Redirect {
         $this->cancelled = false;
         $this->suppress = false;
         $this->use_new_db = false;
-        $this->setIP();
+        $this->setIP($ip);
         $this->resolve_now = true; //overriden by $conf
         $this->use_proxy = true; //overriden by $conf
         $this->evalConf($conf); //$conf to override individual settings
@@ -26,9 +34,21 @@ class Redirect {
         if ($this->resolve_now) {
             $this->resolveNow($this->id,$conf);
         }
-
     }
     
+    private function validateInputs($id,$conf) {
+        $this->valid_input = false;
+        if (preg_match('/^[0-9]+$/',$id)) { 
+            $this->valid_input = true;
+        }
+        elseif (preg_match('/^https*:\/\/([^\/]+)/',$id,$m)) {
+            $domain = $m[1];
+            if (in_array($domain,$conf['allowed_domains'])) {
+                $this->valid_input = true;
+            }
+        }
+        return $this->valid_input;
+    }
     private function evalConf($conf) {
         foreach ($conf as $key => $value) {
             $this->$key = $value;
@@ -43,8 +63,8 @@ class Redirect {
 
     public function setIP($ip = null) {
         if ($ip == null) {
-            if (isset($_ENV['REMOTE_ADDR'])) {
-                $this->ip = $_ENV['REMOTE_ADDR'];
+            if (isset($_SERVER['REMOTE_ADDR'])) {
+                $this->ip = $_SERVER['REMOTE_ADDR'];
             }
         }
         else { 
@@ -54,6 +74,7 @@ class Redirect {
     }
 
     public function getEzproxyPrefix() {
+        global $debug;
         if ($this->ip != '' && (! preg_match(CAMPUS_IP_REGEX,$this->ip))) {
             if ($this->use_proxy == true) {
                 $this->prepend = PROXY_PREFIX;
@@ -62,14 +83,19 @@ class Redirect {
                 $this->prepend = '';
             }
         }
+        if ($debug) { print 'PREPEND: '.$this->prepend.PHP_EOL; }
         $this->logAction(__function__);
     }
     
     public function resolveNow($id, $conf=array()) {
+        global $debug;
+        if ($debug) { print 'Starting to Resolve'.PHP_EOL; }
         if ($conf !== null) {
             $this->evalConf($conf); //rerun to catch test-uses of $conf
         }
         $this->getEzproxyPrefix();
+        $this->resolveURL($id);
+
         if (preg_match('/^http/',$id)) { 
             $this->id = $id;
             $this->url = $id;
@@ -80,7 +106,7 @@ class Redirect {
             $this->url = $this->prepend . $this->url;
             return true;
         }
-        $this->resolveURL($id);
+        if ($debug) { print 'URL: '.$this->url.PHP_EOL; }
         $this->checkCurrent();
         $this->getReplacements($this->id);
         if ($this->hasErrors()) {
