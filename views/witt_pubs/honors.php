@@ -120,6 +120,22 @@ function DisplayRecord($id) {
   
         print "<table>\n";
         print "<tr><th>Author</th> <td>$firstname $lastname</td></tr>\n";
+        if (isset($added_authors) && ($added_authors != '')) {
+            if (preg_match("/;/",$added_authors)) {
+                $added_ess = "s";
+                $added_authors_a = preg_split ("/;/",$added_authors);
+            if (sizeof($added_authors_a) == 2) { $added_authors = join (" and ",$added_authors); }
+            else {
+                $added_authors = "";
+                for ($i=0; $i < (sizeof($added_authors_a)-1); $i++) {
+                    $added_authors .= "$added_authors_a[$i], ";
+                }
+                $size = sizeof($added_authors_a)-1;
+                $added_authors .= "and $added_authors_a[$size]";
+            } // end else
+            }
+            print "<tr><th>Additional Author$added_ess</th> <td>$added_authors</td></tr>\n";
+        }
         print "<tr><th>Title</th> <td>$title</td></tr>\n";
         print "<tr><th>Department</th> <td>$dept1</td></tr>\n";
         print "<tr><th>Advisor$ess</th> <td>$advisor</td></tr>\n";
