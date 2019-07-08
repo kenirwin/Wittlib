@@ -135,7 +135,7 @@ class Redirect {
                 $this->resolved = true;
             }
         }
-        else {
+        elseif (! $this->valid_input) { 
             $this->errors['not_found'] = 'This database was not found.';
         }
         $this->logAction(__function__);
