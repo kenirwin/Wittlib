@@ -34,7 +34,7 @@ elseif (array_key_exists('sort',$_REQUEST)) {
     if ($_REQUEST['sort'] == 'author') {
         ListAuthors();
     }
-    if ($_REQUEST['sort'] == 'dept') {
+    elseif ($_REQUEST['sort'] == 'dept') {
         ListDepts();
     }
     else {
