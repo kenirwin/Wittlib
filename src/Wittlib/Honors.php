@@ -35,7 +35,7 @@ class Honors {
         try {
             $q = $this->c->dsql();
             $q->table('senior_theses')
-                ->where('univ_honors','Y')
+                ->where('honors','Y')
                 ->where('suppress','!=','Y')
                 ->where('perm','!=','none')
                 ->where('id',$id);
@@ -50,7 +50,7 @@ class Honors {
         $q = $this->c->dsql();
         $q->table('senior_theses')
             ->field('dept1,dept2')
-            ->where('univ_honors','Y')
+            ->where('honors','Y')
             ->where('suppress','!=','Y')
             ->where('perm','!=','none');
         $results = $q->get();
