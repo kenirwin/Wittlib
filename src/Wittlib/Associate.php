@@ -16,7 +16,7 @@ class Associate {
         $query->table($this->table)
             ->field($this->key)
             ->field($this->val);
-        print $query->render();
+        //print $query->render();
         return ($query->get());
     }
 }
