@@ -1,6 +1,12 @@
 <script type="text/javascript"
          src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js">
 </script>
+
+<!-- Place this div in your web page where you want your chat widget to appear. -->
+<div id="chat-wrapper" style="float:right">
+<div class="needs-js">chat loading...</div>
+</div>
+
 <?php 
 /*
 error_reporting(E_ALL);
@@ -354,3 +360,11 @@ else { // if not an individual record
 } //end else if not an individual entry
 
 ?>
+<!-- Place this script as near to the end of your BODY as possible. -->
+<script type="text/javascript">
+  (function() {
+    var x = document.createElement("script"); x.type = "text/javascript"; x.async = true;
+    x.src = (document.location.protocol === "https:" ? "https://" : "http://") + "libraryh3lp.com/js/libraryh3lp.js?13384";
+    var y = document.getElementsByTagName("script")[0]; y.parentNode.insertBefore(x, y);
+  })();
+</script>
